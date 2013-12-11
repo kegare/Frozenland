@@ -1,0 +1,12 @@
+﻿# Localization file : en_US
+
+frozenland.version.message=A new %s version is available
+
+item.frozenlandDimensionalBook.name=Frozenland Dimensional Book
+item.stickIce.name=Ice Stick
+item.swordIce.name=Ice Sword
+item.bowIce.name=Ice Bow
+item.pickaxeIce.name=Ice Pickaxe
+item.axeIce.name=Ice Axe
+item.shovelIce.name=Ice Shovel
+item.hoeIce.name=Ice Hoe
