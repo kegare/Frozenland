@@ -2,9 +2,11 @@ package kegare.frozenland.item;
 
 import java.util.Random;
 
+import kegare.frozenland.core.Config;
 import kegare.frozenland.core.Frozenland;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -44,13 +46,16 @@ public class ItemPickaxeIce extends ItemPickaxe
 			Random random = new Random();
 			BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 
-			if (!world.isRemote && block.blockID == Block.ice.blockID)
+			if (!world.isRemote && block.blockID == Block.ice.blockID && world.provider.dimensionId != Config.dimensionFrozenland)
 			{
 				world.setBlockToAir(x, y, z);
 
-				if (random.nextInt(5) == 0)
+				if (EnchantmentHelper.getSilkTouchModifier(entityLiving) ? true : random.nextInt(5) == 0)
 				{
-					world.spawnEntityInWorld(new EntityItem(world, (double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, new ItemStack(block)));
+					EntityItem entity = new EntityItem(world, (double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, new ItemStack(block));
+					entity.delayBeforeCanPickup = 10;
+
+					world.spawnEntityInWorld(entity);
 				}
 			}
 

@@ -56,7 +56,7 @@ public class FrozenItem
 
 			GameRegistry.registerItem(item, "stickIce");
 
-			GameRegistry.addRecipe(new ItemStack(item),
+			GameRegistry.addRecipe(new ItemStack(item, 4),
 					new Object[]
 						{
 							"I",
@@ -92,15 +92,15 @@ public class FrozenItem
 
 			GameRegistry.registerItem(item, "bowIce");
 
-			GameRegistry.addRecipe(new ItemStack(item),
+			GameRegistry.addRecipe(new ShapedOreRecipe(item,
 					new Object[]
 						{
-							"SI ",
-							"S I",
-							"SI",
-							Character.valueOf('I'), Block.ice,
+							" IS",
+							"I S",
+							" IS",
+							Character.valueOf('I'), "stickIce",
 							Character.valueOf('S'), Item.silk
-						});
+						}));
 
 			OreDictionary.registerOre("bowIce", item);
 		}

@@ -2,7 +2,6 @@ package kegare.frozenland.core;
 
 import java.io.File;
 
-import kegare.frozenland.block.BlockIceFrozenland;
 import kegare.frozenland.item.FrozenItem;
 import kegare.frozenland.item.ItemAxeIce;
 import kegare.frozenland.item.ItemBowIce;
@@ -41,8 +40,6 @@ public class Config
 	public static boolean generateLakes;
 	public static boolean generateDungeons;
 
-	public static boolean replaceCustomIce;
-
 	public static void buildConfiguration()
 	{
 		Configuration cfg = new Configuration(new File(Loader.instance().getConfigDir(), "Frozenland.cfg"));
@@ -53,7 +50,6 @@ public class Config
 
 			cfg.addCustomCategoryComment(Configuration.CATEGORY_ITEM, "If multiplayer, values must match on client-side and server-side.");
 			cfg.addCustomCategoryComment("frozenland", "If multiplayer, server-side only.");
-			cfg.addCustomCategoryComment("advanced", "You don't need to change this category settings normally.");
 
 			versionNotify = cfg.get("general", "versionNotify", true, "Whether or not to notify when a new Frozenland version is available. [true/false]").getBoolean(true);
 
@@ -73,8 +69,6 @@ public class Config
 			generateVillage = cfg.get("frozenland", "generateVillage", true, "Whether or not to generate village to Frozenland. [true/false]").getBoolean(true);
 			generateLakes = cfg.get("frozenland", "generateLakes", true, "Whether or not to generate lakes to Frozenland. [true/false]").getBoolean(true);
 			generateDungeons = cfg.get("frozenland", "generateDungeons", true, "Whether or not to generate dungeons to Frozenland. [true/false]").getBoolean(true);
-
-			replaceCustomIce = cfg.get("advanced", "replaceCustomIce", true).getBoolean(true);
 		}
 		finally
 		{
@@ -99,11 +93,5 @@ public class Config
 		if (axeIce > 0) FrozenItem.axeIce = Optional.of((Item)new ItemAxeIce(axeIce, "axeIce"));
 		if (shovelIce > 0) FrozenItem.shovelIce = Optional.of((Item)new ItemSpadeIce(shovelIce, "shovelIce"));
 		if (hoeIce > 0) FrozenItem.hoeIce = Optional.of((Item)new ItemHoeIce(hoeIce, "hoeIce"));
-
-		if (replaceCustomIce)
-		{
-			Block.blocksList[Block.ice.blockID] = null;
-			Block.blocksList[Block.ice.blockID] = new BlockIceFrozenland(Block.ice.blockID);
-		}
 	}
 }
