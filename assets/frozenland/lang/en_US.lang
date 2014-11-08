@@ -1,11 +1,46 @@
-﻿# Localization file : en_US
+# Localization file : en_US
 
 frozenland.version.message=A new %s version is available
 
+frozenland.config.title=Frozenland Configuration
+frozenland.config.general.versionNotify=Version Notify
+frozenland.config.general.versionNotify.tooltip=Whether or not to notify when a new Frozenland version is available.
+frozenland.config.items.frozenlandDimensionalBook=Frozenland Dimensional Book
+frozenland.config.items.frozenlandDimensionalBook.tooltip=Whether or not to add the Frozenland Dimensional Book.
+frozenland.config.items.stickIce=Ice Stick
+frozenland.config.items.stickIce.tooltip=Whether or not to add the Ice Stick.
+frozenland.config.items.swordIce=Ice Sword
+frozenland.config.items.swordIce.tooltip=Whether or not to add the Ice Sword.
+frozenland.config.items.pickaxeIce=Ice Pickaxe
+frozenland.config.items.pickaxeIce.tooltip=Whether or not to add the Ice Pickaxe.
+frozenland.config.items.axeIce=Ice Axe
+frozenland.config.items.axeIce.tooltip=Whether or not to add the Ice Axe.
+frozenland.config.items.shovelIce=Ice Shovel
+frozenland.config.items.shovelIce.tooltip=Whether or not to add the Ice Shovel.
+frozenland.config.items.hoeIce=Ice Hoe
+frozenland.config.items.hoeIce.tooltip=Whether or not to add the Ice Hoe.
+frozenland.config.recipes.packedIceCraftRecipe=Packed Ice Crafting Recipe
+frozenland.config.recipes.packedIceCraftRecipe.tooltip=Whether or not to add a crafting recipe of the Packed Ice.
+frozenland.config.frozenland.dimensionFrozenland=Frozenland Dimension ID
+frozenland.config.frozenland.dimensionFrozenland.tooltip=Specify the dimension ID of the Frozenland.
+frozenland.config.frozenland.biomeFrozenland=Frozenland Biome ID
+frozenland.config.frozenland.biomeFrozenland.tooltip=Specify the biome ID of the Frozenland.
+frozenland.config.frozenland.generateCaves=Generate Caves
+frozenland.config.frozenland.generateCaves.tooltip=Whether or not to generate caves to the Frozenland.
+frozenland.config.frozenland.generateRavine=Generate Ravine
+frozenland.config.frozenland.generateRavine.tooltip=Whether ot not to generate ravine to the Frozenland.
+frozenland.config.frozenland.generateMineshaft=Generate Mineshaft
+frozenland.config.frozenland.generateMineshaft.tooltip=Whether ot not to generate mineshaft to the Frozenland.
+frozenland.config.frozenland.generateVillage=Generate Village
+frozenland.config.frozenland.generateVillage.tooltip=Whether ot not to generate village to the Frozenland.
+frozenland.config.frozenland.generateDungeons=Generate Dungeons
+frozenland.config.frozenland.generateDungeons.tooltip=Whether ot not to generate dungeons to the Frozenland.
+
+item.dimensionalBook.owner=Owner
+item.toolIce.upgraded=Upgraded
 item.frozenlandDimensionalBook.name=Frozenland Dimensional Book
 item.stickIce.name=Ice Stick
 item.swordIce.name=Ice Sword
-item.bowIce.name=Ice Bow
 item.pickaxeIce.name=Ice Pickaxe
 item.axeIce.name=Ice Axe
 item.shovelIce.name=Ice Shovel

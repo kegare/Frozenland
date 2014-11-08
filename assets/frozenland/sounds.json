@@ -1,0 +1,8 @@
+{
+  "dimensional_teleport": {
+    "category": "player",
+    "sounds": [
+      "dimensional_teleport"
+    ]
+  }
+}

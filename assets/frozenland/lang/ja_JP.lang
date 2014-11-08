@@ -1,11 +1,46 @@
-﻿# Localization file : ja_JP
+# Localization file : ja_JPJ
 
 frozenland.version.message=%s の新しいバージョンが利用可能です
 
+frozenland.config.title=Frozenlandの設定
+frozenland.config.general.versionNotify=バージョン通知
+frozenland.config.general.versionNotify.tooltip=Frozenlandの新しいバージョンが利用可能な場合、チャットログで通知します。
+frozenland.config.items.frozenlandDimensionalBook=Frozenland 次元の書
+frozenland.config.items.frozenlandDimensionalBook.tooltip=Frozenland 次元の書を追加します。
+frozenland.config.items.stickIce=氷柱
+frozenland.config.items.stickIce.tooltip=氷柱を追加します。
+frozenland.config.items.swordIce=氷の剣
+frozenland.config.items.swordIce.tooltip=氷の剣を追加します。
+frozenland.config.items.pickaxeIce=氷のツルハシ
+frozenland.config.items.pickaxeIce.tooltip=氷のツルハシを追加します。
+frozenland.config.items.axeIce=氷の斧
+frozenland.config.items.axeIce.tooltip=氷の斧を追加します。
+frozenland.config.items.shovelIce=氷のシャベル
+frozenland.config.items.shovelIce.tooltip=氷のシャベルを追加します。
+frozenland.config.items.hoeIce=氷のクワ
+frozenland.config.items.hoeIce.tooltip=氷のクワを追加します。
+frozenland.config.recipes.packedIceCraftRecipe=氷塊のクラフトレシピ
+frozenland.config.recipes.packedIceCraftRecipe.tooltip=氷塊のクラフトレシピを追加します。
+frozenland.config.frozenland.dimensionFrozenland=Frozenland ディメンションID
+frozenland.config.frozenland.dimensionFrozenland.tooltip=FrozenlandのディメンションIDを指定します。
+frozenland.config.frozenland.biomeFrozenland=Frozenland バイオームID
+frozenland.config.frozenland.biomeFrozenland.tooltip=FrozenlandのバイオームIDを指定します。
+frozenland.config.frozenland.generateCaves=洞窟の生成
+frozenland.config.frozenland.generateCaves.tooltip=Frozenlandに洞窟を生成します。
+frozenland.config.frozenland.generateRavine=峡谷の生成
+frozenland.config.frozenland.generateRavine.tooltip=Frozenlandに峡谷を生成します。
+frozenland.config.frozenland.generateMineshaft=廃坑の生成
+frozenland.config.frozenland.generateMineshaft.tooltip=Frozenlandに廃坑を生成します。
+frozenland.config.frozenland.generateVillage=村の生成
+frozenland.config.frozenland.generateVillage.tooltip=Frozenlandに村を生成します。
+frozenland.config.frozenland.generateDungeons=ダンジョンの生成
+frozenland.config.frozenland.generateDungeons.tooltip=Frozenlandにダンジョンを生成します。
+
+item.dimensionalBook.owner=作成者
+item.toolIce.upgraded=アップグレード
 item.frozenlandDimensionalBook.name=Frozenland 次元の書
 item.stickIce.name=氷柱
 item.swordIce.name=氷の剣
-item.bowIce.name=氷の弓
 item.pickaxeIce.name=氷のツルハシ
 item.axeIce.name=氷の斧
 item.shovelIce.name=氷のシャベル
