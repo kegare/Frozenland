@@ -38,6 +38,7 @@ public class FrozenConfigGui extends GuiConfig
 		List<IConfigElement> list = Lists.newArrayList();
 
 		list.addAll(new ConfigElement(Config.config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements());
+		list.addAll(new ConfigElement(Config.config.getCategory("blocks")).getChildElements());
 		list.addAll(new ConfigElement(Config.config.getCategory("items")).getChildElements());
 		list.addAll(new ConfigElement(Config.config.getCategory("recipes")).getChildElements());
 		list.addAll(new ConfigElement(Config.config.getCategory("frozenland")).getChildElements());

@@ -11,6 +11,7 @@ package com.kegare.frozenland.item;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
@@ -37,6 +38,8 @@ public class FrozenItems
 
 	public static void registerItems()
 	{
+		ICE.customCraftingMaterial = Item.getItemFromBlock(Blocks.ice);
+
 		if (Config.frozenlandDimensionalBook)
 		{
 			GameRegistry.registerItem(frozenland_dimensional_book, "frozenland_dimensional_book");
@@ -162,13 +165,5 @@ public class FrozenItems
 		}
 
 		GameRegistry.addRecipe(new RecipeUpgradeIceTool());
-
-		if (Config.packedIceCraftRecipe)
-		{
-			GameRegistry.addShapedRecipe(new ItemStack(Blocks.packed_ice),
-				"III", "III", "III",
-				'I', Blocks.ice
-			);
-		}
 	}
 }

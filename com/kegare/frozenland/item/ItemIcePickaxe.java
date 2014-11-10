@@ -30,6 +30,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 import com.kegare.frozenland.api.IItemIceTool;
+import com.kegare.frozenland.core.Frozenland;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.relauncher.Side;
@@ -44,6 +45,7 @@ public class ItemIcePickaxe extends ItemPickaxe implements IItemIceTool
 		super(FrozenItems.ICE);
 		this.setUnlocalizedName(name);
 		this.setTextureName("frozenland:ice_pickaxe");
+		this.setCreativeTab(Frozenland.tabFrozenland);
 	}
 
 	@Override

@@ -5,6 +5,10 @@ frozenland.version.message=%s の新しいバージョンが利用可能です
 frozenland.config.title=Frozenlandの設定
 frozenland.config.general.versionNotify=バージョン通知
 frozenland.config.general.versionNotify.tooltip=Frozenlandの新しいバージョンが利用可能な場合、チャットログで通知します。
+frozenland.config.blocks.packedIceSlab=氷塊のハーフブロック
+frozenland.config.blocks.packedIceSlab.tooltip=氷塊のハーフブロックを追加します。
+frozenland.config.blocks.stairsPackedIce=氷塊の階段
+frozenland.config.blocks.stairsPackedIce.tooltip=氷塊の階段を追加します。
 frozenland.config.items.frozenlandDimensionalBook=Frozenland 次元の書
 frozenland.config.items.frozenlandDimensionalBook.tooltip=Frozenland 次元の書を追加します。
 frozenland.config.items.stickIce=氷柱
@@ -35,6 +39,9 @@ frozenland.config.frozenland.generateVillage=村の生成
 frozenland.config.frozenland.generateVillage.tooltip=Frozenlandに村を生成します。
 frozenland.config.frozenland.generateDungeons=ダンジョンの生成
 frozenland.config.frozenland.generateDungeons.tooltip=Frozenlandにダンジョンを生成します。
+
+tile.packedIceSlab.name=氷塊のハーフブロック
+tile.stairsPackedIce.name=氷塊の階段
 
 item.dimensionalBook.owner=作成者
 item.toolIce.upgraded=アップグレード

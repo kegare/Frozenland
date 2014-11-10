@@ -54,6 +54,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -93,6 +94,13 @@ public class FrozenEventHooks
 
 			event.handler.handleChat(new S02PacketChat(component));
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onClientDisconnected(ClientDisconnectionFromServerEvent event)
+	{
+		Frozenland.tabFrozenland.tabIconItem = null;
 	}
 
 	@SubscribeEvent
@@ -232,7 +240,7 @@ public class FrozenEventHooks
 
 				if (item instanceof ItemPickaxe || item.getToolClasses(itemstack).contains("pickaxe"))
 				{
-					int rate = 10;
+					int rate = 8;
 
 					world.playAuxSFXAtEntity(player, 2001, x, y, z, Block.getIdFromBlock(event.block) + (world.getBlockMetadata(x, y, z) << 12));
 					world.setBlockToAir(x, y, z);
@@ -243,7 +251,7 @@ public class FrozenEventHooks
 					}
 					else if (item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equalsIgnoreCase("ice"))
 					{
-						rate = 5;
+						rate = 4;
 					}
 
 					if (rate == 1 || rate > 1 && world.rand.nextInt(rate) == 0)

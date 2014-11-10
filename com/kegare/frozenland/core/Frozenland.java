@@ -11,12 +11,15 @@ package com.kegare.frozenland.core;
 
 import static com.kegare.frozenland.core.Frozenland.*;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.Level;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
+import com.kegare.frozenland.block.FrozenBlocks;
 import com.kegare.frozenland.handler.FrozenEventHooks;
 import com.kegare.frozenland.handler.FrozenlandAPIHandler;
 import com.kegare.frozenland.item.FrozenItems;
@@ -59,6 +62,8 @@ public class Frozenland
 
 	public static final SimpleNetworkWrapper network = new SimpleNetworkWrapper(MODID);
 
+	public static final CreativeTabFrozenland tabFrozenland = new CreativeTabFrozenland();
+
 	@EventHandler
 	public void construct(FMLConstructionEvent event)
 	{
@@ -72,9 +77,12 @@ public class Frozenland
 	{
 		Config.syncConfig();
 
+		FrozenBlocks.registerBlocks();
 		FrozenItems.registerItems();
 
-		BiomeGenFrozenland.frozenland = new BiomeGenFrozenland(Config.biomeFrozenland, true);
+		BiomeGenFrozenland.frozenland = new BiomeGenFrozenland(Config.biomeFrozenland);
+		BiomeManager.addVillageBiome(BiomeGenFrozenland.frozenland, true);
+		BiomeGenBase.explorationBiomesList.remove(BiomeGenFrozenland.frozenland);
 	}
 
 	@EventHandler

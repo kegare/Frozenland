@@ -12,7 +12,6 @@ package com.kegare.frozenland.item;
 import java.util.List;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -26,6 +25,7 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
+import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.util.FrozenUtils;
 
 import cpw.mods.fml.relauncher.Side;
@@ -39,7 +39,7 @@ public class ItemDimensionalBook extends ItemBook
 	{
 		this.setUnlocalizedName(name);
 		this.setTextureName("frozenland:" + texture);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		this.setCreativeTab(Frozenland.tabFrozenland);
 		this.dimensionId = dim;
 	}
 

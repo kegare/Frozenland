@@ -5,6 +5,10 @@ frozenland.version.message=A new %s version is available
 frozenland.config.title=Frozenland Configuration
 frozenland.config.general.versionNotify=Version Notify
 frozenland.config.general.versionNotify.tooltip=Whether or not to notify when a new Frozenland version is available.
+frozenland.config.blocks.packedIceSlab=Packed Ice Slab
+frozenland.config.blocks.packedIceSlab.tooltip=Whether or not to add the Packed Ice Slab.
+frozenland.config.blocks.stairsPackedIce=Packed Ice Stairs
+frozenland.config.blocks.stairsPackedIce.tooltip=Whether or not to add the Packed Ice Stairs.
 frozenland.config.items.frozenlandDimensionalBook=Frozenland Dimensional Book
 frozenland.config.items.frozenlandDimensionalBook.tooltip=Whether or not to add the Frozenland Dimensional Book.
 frozenland.config.items.stickIce=Ice Stick
@@ -35,6 +39,9 @@ frozenland.config.frozenland.generateVillage=Generate Village
 frozenland.config.frozenland.generateVillage.tooltip=Whether ot not to generate village to the Frozenland.
 frozenland.config.frozenland.generateDungeons=Generate Dungeons
 frozenland.config.frozenland.generateDungeons.tooltip=Whether ot not to generate dungeons to the Frozenland.
+
+tile.packedIceSlab.name=Packed Ice Slab
+tile.stairsPackedIce.name=Packed Ice Stairs
 
 item.dimensionalBook.owner=Owner
 item.toolIce.upgraded=Upgraded

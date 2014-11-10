@@ -10,7 +10,6 @@
 package com.kegare.frozenland.util;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.WorldServer;
 
@@ -52,11 +51,10 @@ public class FrozenUtils
 
 	public static EntityPlayerMP forceTeleport(EntityPlayerMP player, int dim, boolean changed)
 	{
-		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 		int dimOld = player.dimension;
-		final WorldServer world = server.worldServerForDimension(dim);
+		WorldServer world = player.mcServer.worldServerForDimension(dim);
 
-		if (dim != player.dimension)
+		if (dim != dimOld)
 		{
 			player = respawnPlayer(player, dim);
 
@@ -67,11 +65,11 @@ public class FrozenUtils
 		}
 
 		ChunkCoordinates spawn = world.getSpawnPoint();
-		int var1 = 64;
+		int i = 16;
 
-		for (int x = spawn.posX - var1; x < spawn.posX + var1; ++x)
+		for (int x = spawn.posX - i; x < spawn.posX + i; ++x)
 		{
-			for (int z = spawn.posZ - var1; z < spawn.posZ + var1; ++z)
+			for (int z = spawn.posZ - i; z < spawn.posZ + i; ++z)
 			{
 				for (int y = world.getActualHeight() - 3; y > world.provider.getAverageGroundLevel(); --y)
 				{

@@ -9,7 +9,6 @@
 
 package com.kegare.frozenland.item;
 
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -17,6 +16,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
 import shift.sextiarysector.api.SextiarySectorAPI;
 
+import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.plugin.sextiarysector.SextiarySectorPlugin;
 
 public class ItemIceStick extends ItemFood
@@ -29,7 +29,7 @@ public class ItemIceStick extends ItemFood
 		this.setFull3D();
 		this.setAlwaysEdible();
 		this.setPotionEffect(Potion.hunger.id, 10, 1, 0.2F);
-		this.setCreativeTab(CreativeTabs.tabMaterials);
+		this.setCreativeTab(Frozenland.tabFrozenland);
 	}
 
 	@Override

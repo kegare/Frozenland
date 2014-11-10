@@ -99,7 +99,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	@Override
 	public float getCloudHeight()
 	{
-		return getActualHeight() - 50.0F;
+		return getActualHeight() - 64.0F;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -199,7 +199,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	@Override
 	public float getStarBrightness(float ticks)
 	{
-		return super.getStarBrightness(ticks) / 2.0F;
+		return 0.0F;
 	}
 
 	@Override

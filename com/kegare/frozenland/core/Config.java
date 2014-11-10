@@ -30,6 +30,9 @@ public class Config
 
 	public static boolean versionNotify;
 
+	public static boolean packedIceSlab;
+	public static boolean stairsPackedIce;
+
 	public static boolean frozenlandDimensionalBook;
 	public static boolean stickIce;
 	public static boolean swordIce;
@@ -85,6 +88,23 @@ public class Config
 		propOrder.add(prop.getName());
 		versionNotify = prop.getBoolean(versionNotify);
 
+		config.setCategoryPropertyOrder(category, propOrder);
+
+		category = "blocks";
+		prop = config.get(category, "packedIceSlab", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		packedIceSlab = prop.getBoolean(packedIceSlab);
+		prop = config.get(category, "stairsPackedIce", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		stairsPackedIce = prop.getBoolean(stairsPackedIce);
+
+		config.setCategoryRequiresMcRestart(category, true);
 		config.setCategoryPropertyOrder(category, propOrder);
 
 		category = "items";
