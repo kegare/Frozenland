@@ -29,8 +29,7 @@ public class CreativeTabFrozenland extends CreativeTabs
 	@SideOnly(Side.CLIENT)
 	public ItemStack tabIconItem;
 
-	@SideOnly(Side.CLIENT)
-	private static final List<ItemStack> iconItems = Lists.newArrayList();
+	private final List<ItemStack> iconItems = Lists.newArrayList();
 
 	public CreativeTabFrozenland()
 	{
