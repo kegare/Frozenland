@@ -95,7 +95,6 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 		return colors;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public float getCloudHeight()
 	{

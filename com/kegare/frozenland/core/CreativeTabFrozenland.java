@@ -29,7 +29,8 @@ public class CreativeTabFrozenland extends CreativeTabs
 	@SideOnly(Side.CLIENT)
 	public ItemStack tabIconItem;
 
-	private final List<ItemStack> iconItems = Lists.newArrayList();
+	@SideOnly(Side.CLIENT)
+	private List<ItemStack> iconItems;
 
 	public CreativeTabFrozenland()
 	{
@@ -63,6 +64,11 @@ public class CreativeTabFrozenland extends CreativeTabs
 	{
 		if (tabIconItem == null)
 		{
+			if (iconItems == null)
+			{
+				iconItems = Lists.newArrayList();
+			}
+
 			if (iconItems.isEmpty())
 			{
 				if (Config.packedIceSlab)
