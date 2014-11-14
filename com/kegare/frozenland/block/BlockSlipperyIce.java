@@ -9,31 +9,27 @@
 
 package com.kegare.frozenland.block;
 
-import java.util.Random;
-
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.BlockPackedIce;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
 import com.kegare.frozenland.core.Frozenland;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockSlabPackedIce extends BlockSlab
+public class BlockSlipperyIce extends BlockPackedIce
 {
-	public BlockSlabPackedIce(String name)
+	public BlockSlipperyIce(String name)
 	{
-		super(false, Material.packedIce);
+		super();
 		this.setBlockName(name);
-		this.setStepSound(Blocks.packed_ice.stepSound);
+		this.setHardness(0.6F);
+		this.setStepSound(soundTypeGlass);
 		this.setCreativeTab(Frozenland.tabFrozenland);
-		this.slipperiness = Blocks.packed_ice.slipperiness;
-		this.useNeighborBrightness = true;
+		this.slipperiness = 1.08F;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -47,29 +43,25 @@ public class BlockSlabPackedIce extends BlockSlab
 		return Blocks.packed_ice.getIcon(side, metadata);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	public String func_150002_b(int metadata)
+	public int getBlockColor()
 	{
-		return getUnlocalizedName();
-	}
-
-	@Override
-	public float getBlockHardness(World world, int x, int y, int z)
-	{
-		return Blocks.packed_ice.getBlockHardness(world, x, y, z);
+		return 0xD3EDFB;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Item getItem(World world, int x, int y, int z)
+	public int getRenderColor(int metadata)
 	{
-		return Item.getItemFromBlock(this);
+		return getBlockColor();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	public int quantityDropped(Random random)
+	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z)
 	{
-		return 0;
+		return getBlockColor();
 	}
 
 	@Override

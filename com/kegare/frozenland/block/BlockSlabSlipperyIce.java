@@ -14,9 +14,9 @@ import java.util.Random;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import com.kegare.frozenland.core.Frozenland;
@@ -24,15 +24,15 @@ import com.kegare.frozenland.core.Frozenland;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockSlabPackedIce extends BlockSlab
+public class BlockSlabSlipperyIce extends BlockSlab
 {
-	public BlockSlabPackedIce(String name)
+	public BlockSlabSlipperyIce(String name)
 	{
 		super(false, Material.packedIce);
 		this.setBlockName(name);
-		this.setStepSound(Blocks.packed_ice.stepSound);
+		this.setStepSound(FrozenBlocks.slippery_ice.stepSound);
 		this.setCreativeTab(Frozenland.tabFrozenland);
-		this.slipperiness = Blocks.packed_ice.slipperiness;
+		this.slipperiness = FrozenBlocks.slippery_ice.slipperiness;
 		this.useNeighborBrightness = true;
 	}
 
@@ -44,7 +44,28 @@ public class BlockSlabPackedIce extends BlockSlab
 	@Override
 	public IIcon getIcon(int side, int metadata)
 	{
-		return Blocks.packed_ice.getIcon(side, metadata);
+		return FrozenBlocks.slippery_ice.getIcon(side, metadata);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public int getBlockColor()
+	{
+		return FrozenBlocks.slippery_ice.getBlockColor();
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public int getRenderColor(int metadata)
+	{
+		return FrozenBlocks.slippery_ice.getRenderColor(metadata);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z)
+	{
+		return FrozenBlocks.slippery_ice.colorMultiplier(blockAccess, x, y, z);
 	}
 
 	@Override
@@ -56,7 +77,7 @@ public class BlockSlabPackedIce extends BlockSlab
 	@Override
 	public float getBlockHardness(World world, int x, int y, int z)
 	{
-		return Blocks.packed_ice.getBlockHardness(world, x, y, z);
+		return FrozenBlocks.slippery_ice.getBlockHardness(world, x, y, z);
 	}
 
 	@SideOnly(Side.CLIENT)

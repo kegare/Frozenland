@@ -28,7 +28,6 @@ public class CreativeTabFrozenland extends CreativeTabs
 {
 	@SideOnly(Side.CLIENT)
 	public ItemStack tabIconItem;
-
 	@SideOnly(Side.CLIENT)
 	private List<ItemStack> iconItems;
 
@@ -79,6 +78,21 @@ public class CreativeTabFrozenland extends CreativeTabs
 				if (Config.stairsPackedIce)
 				{
 					iconItems.add(new ItemStack(FrozenBlocks.packed_ice_stairs));
+				}
+
+				if (Config.slipperyIce)
+				{
+					iconItems.add(new ItemStack(FrozenBlocks.slippery_ice));
+				}
+
+				if (Config.slipperyIceSlab)
+				{
+					iconItems.add(new ItemStack(FrozenBlocks.slippery_ice_slab));
+				}
+
+				if (Config.stairsSlipperyIce)
+				{
+					iconItems.add(new ItemStack(FrozenBlocks.slippery_ice_stairs));
 				}
 
 				if (Config.frozenlandDimensionalBook)

@@ -72,7 +72,8 @@ public class ItemDimensionalBook extends ItemBook
 					pos.setDouble("PosZ", thePlayer.posZ);
 					pos.setFloat("Yaw", thePlayer.rotationYaw);
 					pos.setFloat("Pitch", thePlayer.rotationPitch);
-					nbt.setTag("LastUsePos." + world.provider.dimensionId, pos);
+					nbt.setInteger("LastDim", thePlayer.dimension);
+					nbt.setTag("LastUsePos." + thePlayer.dimension, pos);
 
 					world.playSoundToNearExcept(thePlayer, "frozenland:dimensional_teleport", 0.5F, 1.0F);
 
@@ -123,8 +124,6 @@ public class ItemDimensionalBook extends ItemBook
 					{
 						nbt.setLong("LastUseTime", world.getTotalWorldTime());
 					}
-
-					nbt.setInteger("LastDim", world.provider.dimensionId);
 				}
 			}
 		}
@@ -176,6 +175,12 @@ public class ItemDimensionalBook extends ItemBook
 			nbt.setString("Owner", player.getGameProfile().getId().toString());
 			nbt.setString("OwnerName", player.getGameProfile().getName());
 		}
+	}
+
+	@Override
+	public int getItemEnchantability()
+	{
+		return 0;
 	}
 
 	@SideOnly(Side.CLIENT)

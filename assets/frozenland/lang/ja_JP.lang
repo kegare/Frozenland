@@ -9,6 +9,12 @@ frozenland.config.blocks.packedIceSlab=氷塊のハーフブロック
 frozenland.config.blocks.packedIceSlab.tooltip=氷塊のハーフブロックを追加します。
 frozenland.config.blocks.stairsPackedIce=氷塊の階段
 frozenland.config.blocks.stairsPackedIce.tooltip=氷塊の階段を追加します。
+frozenland.config.blocks.slipperyIce=滑りやすい氷
+frozenland.config.blocks.slipperyIce.tooltip=滑りやすい氷を追加します。
+frozenland.config.blocks.slipperyIceSlab=滑りやすい氷のハーフブロック
+frozenland.config.blocks.slipperyIceSlab.tooltip=滑りやすい氷のハーフブロックを追加します。
+frozenland.config.blocks.stairsSlipperyIce=滑りやすい氷の階段
+frozenland.config.blocks.stairsSlipperyIce.tooltip=滑りやすい氷の階段を追加します。
 frozenland.config.items.frozenlandDimensionalBook=Frozenland 次元の書
 frozenland.config.items.frozenlandDimensionalBook.tooltip=Frozenland 次元の書を追加します。
 frozenland.config.items.stickIce=氷柱
@@ -42,6 +48,9 @@ frozenland.config.frozenland.generateDungeons.tooltip=Frozenlandにダンジョ�
 
 tile.packedIceSlab.name=氷塊のハーフブロック
 tile.stairsPackedIce.name=氷塊の階段
+tile.slipperyIce.name=滑りやすい氷
+tile.slipperyIceSlab.name=滑りやすい氷のハーフブロック
+tile.stairsSlipperyIce.name=滑りやすい氷の階段
 
 item.dimensionalBook.owner=作成者
 item.toolIce.upgraded=アップグレード

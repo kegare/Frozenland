@@ -9,6 +9,12 @@ frozenland.config.blocks.packedIceSlab=Packed Ice Slab
 frozenland.config.blocks.packedIceSlab.tooltip=Whether or not to add the Packed Ice Slab.
 frozenland.config.blocks.stairsPackedIce=Packed Ice Stairs
 frozenland.config.blocks.stairsPackedIce.tooltip=Whether or not to add the Packed Ice Stairs.
+frozenland.config.blocks.slipperyIce=Slippery Ice
+frozenland.config.blocks.slipperyIce.tooltip=Whether or not to add the Slippery Ice.
+frozenland.config.blocks.slipperyIceSlab=Slippery Ice Slab
+frozenland.config.blocks.slipperyIceSlab.tooltip=Whether or not to add Slippery Ice Slab.
+frozenland.config.blocks.stairsSlipperyIce=Slippery Ice Stairs
+frozenland.config.blocks.stairsSlipperyIce.tooltip=Whether or not to add Slippery Ice Stairs.
 frozenland.config.items.frozenlandDimensionalBook=Frozenland Dimensional Book
 frozenland.config.items.frozenlandDimensionalBook.tooltip=Whether or not to add the Frozenland Dimensional Book.
 frozenland.config.items.stickIce=Ice Stick
@@ -42,6 +48,9 @@ frozenland.config.frozenland.generateDungeons.tooltip=Whether ot not to generate
 
 tile.packedIceSlab.name=Packed Ice Slab
 tile.stairsPackedIce.name=Packed Ice Stairs
+tile.slipperyIce.name=Slippery Ice
+tile.slipperyIceSlab.name=Slippery Ice Slab
+tile.stairsSlipperyIce.name=Slippery Ice Stairs
 
 item.dimensionalBook.owner=Owner
 item.toolIce.upgraded=Upgraded

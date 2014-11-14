@@ -32,6 +32,9 @@ public class Config
 
 	public static boolean packedIceSlab;
 	public static boolean stairsPackedIce;
+	public static boolean slipperyIce;
+	public static boolean slipperyIceSlab;
+	public static boolean stairsSlipperyIce;
 
 	public static boolean frozenlandDimensionalBook;
 	public static boolean stickIce;
@@ -103,6 +106,24 @@ public class Config
 		prop.comment += " [default: " + prop.getDefault() + "]";
 		propOrder.add(prop.getName());
 		stairsPackedIce = prop.getBoolean(stairsPackedIce);
+		prop = config.get(category, "slipperyIce", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		slipperyIce = prop.getBoolean(slipperyIce);
+		prop = config.get(category, "slipperyIceSlab", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		slipperyIceSlab = prop.getBoolean(slipperyIceSlab);
+		prop = config.get(category, "stairsSlipperyIce", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		stairsSlipperyIce = prop.getBoolean(stairsSlipperyIce);
 
 		config.setCategoryRequiresMcRestart(category, true);
 		config.setCategoryPropertyOrder(category, propOrder);
