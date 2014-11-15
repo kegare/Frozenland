@@ -15,7 +15,9 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.event.ClickEvent;
@@ -33,12 +35,16 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
+import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import shift.sextiarysector.api.SextiarySectorAPI;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
+import com.kegare.frozenland.block.FrozenBlocks;
 import com.kegare.frozenland.core.Config;
 import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.item.ItemIcePickaxe;
@@ -181,7 +187,10 @@ public class FrozenEventHooks
 
 				if (player.ticksExisted % i == 0)
 				{
-					if (player.getArmorVisibility() <= 0.0F)
+					float armor = player.getArmorVisibility();
+					boolean daytime = player.worldObj.isDaytime();
+
+					if (armor <= 0.0F)
 					{
 						player.addExhaustion(0.05F);
 
@@ -190,9 +199,16 @@ public class FrozenEventHooks
 							SextiarySectorAPI.addStaminaExhaustion(player, 2.0F);
 						}
 
-						player.attackEntityFrom(DamageSource.generic, 1.0F);
+						if (daytime)
+						{
+							player.attackEntityFrom(DamageSource.generic, 1.0F);
+						}
+						else
+						{
+							player.attackEntityFrom(DamageSource.generic, 1.5F);
+						}
 					}
-					else if (player.getArmorVisibility() < 0.5F)
+					else if (armor < 0.5F)
 					{
 						player.addExhaustion(0.035F);
 
@@ -201,15 +217,111 @@ public class FrozenEventHooks
 							SextiarySectorAPI.addStaminaExhaustion(player, 1.0F);
 						}
 
-						player.attackEntityFrom(DamageSource.generic, 0.5F);
+						if (daytime)
+						{
+							player.attackEntityFrom(DamageSource.generic, 0.5F);
+						}
+						else
+						{
+							player.attackEntityFrom(DamageSource.generic, 1.0F);
+						}
 					}
-					else if (player.getArmorVisibility() < 0.75F)
+					else if (armor < 0.75F)
 					{
 						player.addExhaustion(0.015F);
 
 						if (SextiarySectorPlugin.enabled())
 						{
 							SextiarySectorAPI.addStaminaExhaustion(player, 0.5F);
+						}
+
+						if (daytime)
+						{
+							player.attackEntityFrom(DamageSource.generic, 0.5F);
+						}
+					}
+				}
+			}
+		}
+		else if (event.entityLiving instanceof EntityLiving)
+		{
+			EntityLiving living = (EntityLiving)event.entityLiving;
+
+			if (FrozenlandAPI.isEntityInFrozenland(living))
+			{
+				int i = 0;
+				boolean boots = false;
+
+				if (living.func_130225_q(3) != null)
+				{
+					++i;
+				}
+
+				if (living.func_130225_q(2) != null)
+				{
+					++i;
+				}
+
+				if (living.func_130225_q(1) != null)
+				{
+					++i;
+				}
+
+				if (living.func_130225_q(0) != null)
+				{
+					boots = true;
+					++i;
+				}
+
+				if (!boots)
+				{
+					living.motionX *= 0.9D;
+					living.motionZ *= 0.9D;
+				}
+
+				int j = 200;
+
+				if (living.isSprinting())
+				{
+					j /= 3;
+				}
+
+				if (living.ticksExisted % j == 0)
+				{
+					float armor = i / 4.0F;
+					boolean daytime = living.worldObj.isDaytime();
+
+					if (armor <= 0.0F)
+					{
+						if (daytime)
+						{
+							living.attackEntityFrom(DamageSource.generic, 2.0F);
+						}
+						else
+						{
+							living.attackEntityFrom(DamageSource.generic, 2.5F);
+						}
+					}
+					else if (armor < 0.5F)
+					{
+						if (daytime)
+						{
+							living.attackEntityFrom(DamageSource.generic, 1.0F);
+						}
+						else
+						{
+							living.attackEntityFrom(DamageSource.generic, 1.5F);
+						}
+					}
+					else if (armor < 0.75F)
+					{
+						if (daytime)
+						{
+							living.attackEntityFrom(DamageSource.generic, 0.5F);
+						}
+						else
+						{
+							living.attackEntityFrom(DamageSource.generic, 1.0F);
 						}
 					}
 				}
@@ -222,6 +334,8 @@ public class FrozenEventHooks
 	{
 		if (FrozenlandAPI.isEntityInFrozenland(event.getPlayer()) && event.getPlayer() instanceof EntityPlayerMP)
 		{
+			Block block = event.block;
+			int metadata = event.blockMetadata;
 			EntityPlayerMP player = (EntityPlayerMP)event.getPlayer();
 			WorldServer world = player.getServerForPlayer();
 			int x = event.x;
@@ -229,7 +343,7 @@ public class FrozenEventHooks
 			int z = event.z;
 			ItemStack itemstack = player.getCurrentEquippedItem();
 
-			if (itemstack != null && itemstack.getItem() != null && (event.block == Blocks.ice || event.block == Blocks.packed_ice))
+			if (itemstack != null && itemstack.getItem() != null && (block == Blocks.ice || block == Blocks.packed_ice || block == FrozenBlocks.slippery_ice))
 			{
 				Item item = itemstack.getItem();
 
@@ -242,7 +356,7 @@ public class FrozenEventHooks
 				{
 					int rate = 8;
 
-					world.playAuxSFXAtEntity(player, 2001, x, y, z, Block.getIdFromBlock(event.block) + (world.getBlockMetadata(x, y, z) << 12));
+					world.playAuxSFXAtEntity(player, 2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
 					world.setBlockToAir(x, y, z);
 
 					if (EnchantmentHelper.getSilkTouchModifier(player))
@@ -256,7 +370,7 @@ public class FrozenEventHooks
 
 					if (rate == 1 || rate > 1 && world.rand.nextInt(rate) == 0)
 					{
-						EntityItem entity = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(event.block));
+						EntityItem entity = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(block, 1, metadata));
 						entity.delayBeforeCanPickup = 10;
 
 						world.spawnEntityInWorld(entity);
@@ -269,11 +383,59 @@ public class FrozenEventHooks
 	}
 
 	@SubscribeEvent
+	public void onLivingCheckSpawn(LivingSpawnEvent.CheckSpawn event)
+	{
+		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		{
+			if (event.entityLiving instanceof IMob)
+			{
+				event.setResult(Result.DENY);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingSpecialSpawn(LivingSpawnEvent.SpecialSpawn event)
+	{
+		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		{
+			if (event.entityLiving instanceof IMob)
+			{
+				event.setCanceled(true);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingDespawn(LivingSpawnEvent.AllowDespawn event)
+	{
+		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		{
+			if (event.entityLiving instanceof IMob)
+			{
+				event.setResult(Result.ALLOW);
+			}
+		}
+	}
+
+	@SubscribeEvent
 	public void onChunkPopulate(PopulateChunkEvent.Populate event)
 	{
 		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
 		{
 			if (event.type == Populate.EventType.LAVA || event.type == Populate.EventType.NETHER_LAVA)
+			{
+				event.setResult(Result.DENY);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onBiomeDecorate(DecorateBiomeEvent.Decorate event)
+	{
+		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		{
+			if (event.type == Decorate.EventType.TREE)
 			{
 				event.setResult(Result.DENY);
 			}

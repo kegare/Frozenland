@@ -30,6 +30,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 import com.kegare.frozenland.api.IItemIceTool;
+import com.kegare.frozenland.block.FrozenBlocks;
 import com.kegare.frozenland.core.Frozenland;
 
 import cpw.mods.fml.client.config.GuiConfig;
@@ -123,11 +124,11 @@ public class ItemIcePickaxe extends ItemPickaxe implements IItemIceTool
 	@Override
 	public boolean onBlockDestroyed(ItemStack itemstack, World world, Block block, int x, int y, int z, EntityLivingBase entity)
 	{
-		if (!world.isRemote && (block == Blocks.ice || block == Blocks.packed_ice))
+		if (!world.isRemote && (block == Blocks.ice || block == Blocks.packed_ice || block == FrozenBlocks.slippery_ice))
 		{
 			world.setBlockToAir(x, y, z);
 
-			if (EnchantmentHelper.getSilkTouchModifier(entity) || random.nextInt(3) == 0)
+			if (EnchantmentHelper.getSilkTouchModifier(entity) || random.nextBoolean())
 			{
 				EntityItem item = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(block));
 				item.delayBeforeCanPickup = 10;

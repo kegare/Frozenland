@@ -47,7 +47,7 @@ public class MapGenCavesFrozenland extends MapGenCaves
 
 		for (boolean chance = random.nextInt(6) == 0; currentY < targetY; ++currentY)
 		{
-			double roomWidth = 1.5D + MathHelper.sin(currentY * (float)Math.PI / targetY) * scale;
+			double roomWidth = 2.0D + MathHelper.sin(currentY * (float)Math.PI / targetY) * scale;
 			double roomHeight = roomWidth * scaleHeight;
 			float moveHorizontal = MathHelper.cos(upDownRadian);
 			float moveVertical = MathHelper.sin(upDownRadian);
