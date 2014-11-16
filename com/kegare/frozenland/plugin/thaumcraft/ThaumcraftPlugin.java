@@ -35,6 +35,9 @@ public class ThaumcraftPlugin
 	{
 		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenBlocks.packed_ice_slab, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 1).add(Aspect.EARTH, 1));
 		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenBlocks.packed_ice_stairs, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 3).add(Aspect.EARTH, 1));
+		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenBlocks.slippery_ice, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 10).add(Aspect.EARTH, 1));
+		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenBlocks.slippery_ice_slab, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 5).add(Aspect.EARTH, 1));
+		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenBlocks.slippery_ice_stairs, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 9).add(Aspect.EARTH, 1));
 		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenItems.frozenland_dimensional_book, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.TRAVEL, 3).add(Aspect.COLD, 6));
 		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenItems.ice_stick, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 2));
 		ThaumcraftApi.registerObjectTag(new ItemStack(FrozenItems.ice_sword, 1, OreDictionary.WILDCARD_VALUE), new AspectList().add(Aspect.COLD, 2).add(Aspect.WEAPON, 1).add(Aspect.TOOL, 1));

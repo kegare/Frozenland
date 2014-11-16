@@ -21,7 +21,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.IRenderHandler;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
-import com.kegare.frozenland.client.renderer.EmptyRenderer;
+import com.kegare.frozenland.client.renderer.FrozenlandSkyRenderer;
 import com.kegare.frozenland.client.renderer.FrozenlandWheatherRenderer;
 import com.kegare.frozenland.world.gen.StructureVillagePieces;
 import com.kegare.frozenland.world.gen.StructureVillageStart;
@@ -107,7 +107,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	{
 		if (super.getSkyRenderer() == null)
 		{
-			setSkyRenderer(EmptyRenderer.instance);
+			setSkyRenderer(new FrozenlandSkyRenderer());
 		}
 
 		return super.getSkyRenderer();
@@ -136,7 +136,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	public Vec3 getSkyColor(Entity entity, float ticks)
 	{
 		Vec3 vec = super.getSkyColor(entity, ticks);
-		double d = 3.25D;
+		double d = 3.5D;
 
 		return Vec3.createVectorHelper(vec.xCoord / d, vec.yCoord / d, vec.zCoord / d);
 	}
@@ -198,7 +198,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	@Override
 	public float getStarBrightness(float ticks)
 	{
-		return 0.0F;
+		return super.getStarBrightness(ticks) * 1.75F;
 	}
 
 	@Override

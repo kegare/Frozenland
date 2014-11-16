@@ -11,7 +11,6 @@ package com.kegare.frozenland.core;
 
 import static com.kegare.frozenland.core.Frozenland.*;
 import net.minecraft.util.StatCollector;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -82,7 +81,6 @@ public class Frozenland
 
 		BiomeGenFrozenland.frozenland = new BiomeGenFrozenland(Config.biomeFrozenland);
 		BiomeManager.addVillageBiome(BiomeGenFrozenland.frozenland, true);
-		BiomeGenBase.explorationBiomesList.remove(BiomeGenFrozenland.frozenland);
 	}
 
 	@EventHandler

@@ -54,7 +54,7 @@ public class ItemDimensionalBook extends ItemBook
 
 			if (nbt != null && nbt.getString("Owner").equals(thePlayer.getGameProfile().getId().toString()))
 			{
-				if (thePlayer.capabilities.isCreativeMode || nbt.getLong("LastUseTime") + (world.difficultySetting.getDifficultyId() > 2 ? 6000L : 3600L) < world.getTotalWorldTime())
+				if (thePlayer.capabilities.isCreativeMode || nbt.getLong("LastUseTime") + (world.difficultySetting.getDifficultyId() > 2 ? 12000L : 6000L) < world.getTotalWorldTime())
 				{
 					if (thePlayer.dimension == dimensionId && nbt.hasKey("LastDim"))
 					{

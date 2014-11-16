@@ -18,6 +18,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.event.ClickEvent;
@@ -243,7 +244,7 @@ public class FrozenEventHooks
 				}
 			}
 		}
-		else if (event.entityLiving instanceof EntityLiving)
+		else if (event.entityLiving instanceof EntityLiving && !(event.entityLiving instanceof EntityVillager))
 		{
 			EntityLiving living = (EntityLiving)event.entityLiving;
 

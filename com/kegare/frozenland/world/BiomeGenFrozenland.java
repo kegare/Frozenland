@@ -26,7 +26,7 @@ public class BiomeGenFrozenland extends BiomeGenBase
 	{
 		super(biomeID);
 		this.setBiomeName("Frozenland");
-		this.setColor(10526880);
+		this.setColor(0xD4F0FF);
 		this.topBlock = Blocks.ice;
 		this.fillerBlock = Blocks.ice;
 		this.spawnableCreatureList.clear();
