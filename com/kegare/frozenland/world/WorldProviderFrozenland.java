@@ -38,6 +38,8 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 		worldChunkMgr = new WorldChunkManagerHell(FrozenlandAPI.getBiome(), 1.0F);
 		dimensionId = FrozenlandAPI.getDimension();
 
+		setAllowedSpawnTypes(false, false);
+
 		MapGenStructureIO.registerStructure(StructureVillageStart.class, "Village.Frozenland");
 		StructureVillagePieces.registerPieces();
 	}

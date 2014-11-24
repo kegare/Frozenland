@@ -74,6 +74,10 @@ public class Frozenland
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		int id = 0;
+
+		network.registerMessage(DimSyncMessage.class, DimSyncMessage.class, id++, Side.CLIENT);
+
 		Config.syncConfig();
 
 		FrozenBlocks.registerBlocks();
@@ -86,11 +90,7 @@ public class Frozenland
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		int id = 0;
-
-		network.registerMessage(DimSyncMessage.class, DimSyncMessage.class, id++, Side.CLIENT);
-
-		id = Config.dimensionFrozenland;
+		int id = Config.dimensionFrozenland;
 		DimensionManager.registerProviderType(id, WorldProviderFrozenland.class, true);
 		DimensionManager.registerDimension(id, id);
 

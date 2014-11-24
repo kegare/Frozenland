@@ -9,16 +9,27 @@
 
 package com.kegare.frozenland.util;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockIce;
+import net.minecraft.block.BlockPackedIce;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
+import com.kegare.frozenland.block.BlockSlabPackedIce;
+import com.kegare.frozenland.block.BlockSlabSlipperyIce;
+import com.kegare.frozenland.block.BlockSlipperyIce;
+import com.kegare.frozenland.block.BlockStairsPackedIce;
+import com.kegare.frozenland.block.BlockStairsSlipperyIce;
 import com.kegare.frozenland.core.Frozenland;
+import com.kegare.frozenland.world.TeleporterDummy;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 
 public class FrozenUtils
 {
@@ -39,84 +50,161 @@ public class FrozenUtils
 		return mod;
 	}
 
-	public static EntityPlayerMP respawnPlayer(EntityPlayerMP player, int dim)
+	public static boolean isIceBlock(Block block)
 	{
-		player.isDead = false;
-		player.forceSpawn = true;
-		player.timeUntilPortal = player.getPortalCooldown();
-		player.playerNetServerHandler.playerEntity = player.mcServer.getConfigurationManager().respawnPlayer(player, dim, true);
-
-		return player.playerNetServerHandler.playerEntity;
+		return block != null && (block instanceof BlockIce || block instanceof BlockPackedIce || block instanceof BlockSlipperyIce ||
+			block instanceof BlockSlabPackedIce || block instanceof BlockStairsPackedIce ||
+			block instanceof BlockSlabSlipperyIce || block instanceof BlockStairsSlipperyIce);
 	}
 
-	public static EntityPlayerMP forceTeleport(EntityPlayerMP player, int dim, boolean changed)
+	public static boolean teleportPlayer(EntityPlayerMP player, int dim)
 	{
-		int dimOld = player.dimension;
-		WorldServer world = player.mcServer.worldServerForDimension(dim);
-
-		if (dim != dimOld)
+		if (!DimensionManager.isDimensionRegistered(dim))
 		{
-			player = respawnPlayer(player, dim);
-
-			if (changed)
-			{
-				FMLCommonHandler.instance().bus().post(new PlayerChangedDimensionEvent(player, dimOld, dim));
-			}
+			return false;
 		}
 
-		ChunkCoordinates spawn = world.getSpawnPoint();
-		int i = 16;
-
-		for (int x = spawn.posX - i; x < spawn.posX + i; ++x)
+		if (dim != player.dimension)
 		{
-			for (int z = spawn.posZ - i; z < spawn.posZ + i; ++z)
+			player.isDead = false;
+			player.forceSpawn = true;
+			player.timeUntilPortal = player.getPortalCooldown();
+			player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new TeleporterDummy(player.mcServer.worldServerForDimension(dim)));
+			player.addExperienceLevel(0);
+		}
+
+		WorldServer world = player.getServerForPlayer();
+		ChunkCoordinates spawn;
+		String key = "Caveworld:LastForceTeleport." + dim;
+		int x, y, z;
+
+		if (player.getEntityData().hasKey(key))
+		{
+			NBTTagCompound data = player.getEntityData().getCompoundTag(key);
+			x = data.getInteger("PosX");
+			y = data.getInteger("PosY");
+			z = data.getInteger("PosZ");
+			spawn = new ChunkCoordinates(x, y, z);
+		}
+		else
+		{
+			spawn = world.getSpawnPoint();
+		}
+
+		x = spawn.posX;
+		y = spawn.posY;
+		z = spawn.posZ;
+
+		if (world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z))
+		{
+			while (world.isAirBlock(x, y - 1, z))
 			{
-				for (int y = world.getActualHeight() - 3; y > world.provider.getAverageGroundLevel(); --y)
+				--y;
+			}
+
+			if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
+			{
+				player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+
+				NBTTagCompound data = new NBTTagCompound();
+				data.setInteger("PosX", x);
+				data.setInteger("PosY", y);
+				data.setInteger("PosZ", z);
+				player.getEntityData().setTag(key, data);
+			}
+		}
+		else
+		{
+			int range = 16;
+
+			for (x = spawn.posX - range; x < spawn.posX + range; ++x)
+			{
+				for (z = spawn.posZ - range; z < spawn.posZ + range; ++z)
 				{
-					if (world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z) &&
-						world.isAirBlock(x - 1, y, z) && world.isAirBlock(x - 1, y + 1, z) &&
-						world.isAirBlock(x + 1, y, z) && world.isAirBlock(x + 1, y + 1, z) &&
-						world.isAirBlock(x, y, z - 1) && world.isAirBlock(x, y + 1, z - 1) &&
-						world.isAirBlock(x, y, z + 1) && world.isAirBlock(x, y + 1, z + 1) &&
-						!world.getBlock(x, y - 1, z).getMaterial().isLiquid())
+					for (y = world.getActualHeight() - 3; y > world.provider.getAverageGroundLevel(); --y)
 					{
-						while (world.isAirBlock(x, y - 1, z))
+						if (world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z) &&
+							world.isAirBlock(x - 1, y, z) && world.isAirBlock(x - 1, y + 1, z) &&
+							world.isAirBlock(x + 1, y, z) && world.isAirBlock(x + 1, y + 1, z) &&
+							world.isAirBlock(x, y, z - 1) && world.isAirBlock(x, y + 1, z - 1) &&
+							world.isAirBlock(x, y, z + 1) && world.isAirBlock(x, y + 1, z + 1))
 						{
-							--y;
-						}
+							while (world.isAirBlock(x, y - 1, z))
+							{
+								--y;
+							}
 
-						if (!world.getBlock(x, y - 1, z).getMaterial().isLiquid())
-						{
-							player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
-							player.addExperienceLevel(0);
+							if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
+							{
+								player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
 
-							return player;
+								NBTTagCompound data = new NBTTagCompound();
+								data.setInteger("PosX", x);
+								data.setInteger("PosY", y);
+								data.setInteger("PosZ", z);
+								player.getEntityData().setTag(key, data);
+
+								return true;
+							}
 						}
 					}
 				}
 			}
+
+			x = 0;
+			y = 30;
+			z = 0;
+			player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+			world.setBlockToAir(x, y, z);
+			world.setBlockToAir(x, y + 1, z);
+			world.setBlock(x, y - 1, z, Blocks.stone);
 		}
 
-		return player;
+		return false;
 	}
 
-	public static EntityPlayerMP forceTeleport(EntityPlayerMP player, int dim, boolean changed, double posX, double posY, double posZ, float yaw, float pitch)
+	public static boolean teleportPlayer(EntityPlayerMP player, int dim, double posX, double posY, double posZ, float yaw, float pitch)
 	{
-		int dimOld = player.dimension;
+		if (!DimensionManager.isDimensionRegistered(dim))
+		{
+			return false;
+		}
 
 		if (dim != player.dimension)
 		{
-			player = respawnPlayer(player, dim);
+			player.isDead = false;
+			player.forceSpawn = true;
+			player.timeUntilPortal = player.getPortalCooldown();
+			player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new TeleporterDummy(player.mcServer.worldServerForDimension(dim)));
+			player.addExperienceLevel(0);
+		}
 
-			if (changed)
+		WorldServer world = player.getServerForPlayer();
+		int x = MathHelper.floor_double(posX);
+		int y = MathHelper.floor_double(posY);
+		int z = MathHelper.floor_double(posZ);
+
+		if (world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z))
+		{
+			while (world.isAirBlock(x, y - 1, z))
 			{
-				FMLCommonHandler.instance().bus().post(new PlayerChangedDimensionEvent(player, dimOld, dim));
+				--y;
+			}
+
+			if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
+			{
+				player.playerNetServerHandler.setPlayerLocation(posX, posY + 0.5D, posZ, yaw, pitch);
+
+				NBTTagCompound data = new NBTTagCompound();
+				data.setInteger("PosX", x);
+				data.setInteger("PosY", y);
+				data.setInteger("PosZ", z);
+				player.getEntityData().setTag("Caveworld:LastForceTeleport." + dim, data);
+
+				return true;
 			}
 		}
 
-		player.playerNetServerHandler.setPlayerLocation(posX, posY + 0.5D, posZ, yaw, pitch);
-		player.addExperienceLevel(0);
-
-		return player;
+		return teleportPlayer(player, dim);
 	}
 }

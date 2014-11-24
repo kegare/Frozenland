@@ -20,7 +20,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -45,12 +44,12 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import shift.sextiarysector.api.SextiarySectorAPI;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
-import com.kegare.frozenland.block.FrozenBlocks;
 import com.kegare.frozenland.core.Config;
 import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.item.ItemIcePickaxe;
 import com.kegare.frozenland.network.DimSyncMessage;
 import com.kegare.frozenland.plugin.sextiarysector.SextiarySectorPlugin;
+import com.kegare.frozenland.util.FrozenUtils;
 import com.kegare.frozenland.util.Version;
 import com.kegare.frozenland.util.Version.Status;
 
@@ -333,18 +332,18 @@ public class FrozenEventHooks
 	@SubscribeEvent
 	public void onPlayerBreak(BreakEvent event)
 	{
-		if (FrozenlandAPI.isEntityInFrozenland(event.getPlayer()) && event.getPlayer() instanceof EntityPlayerMP)
+		if (FrozenlandAPI.isEntityInFrozenland(event.getPlayer()))
 		{
 			Block block = event.block;
 			int metadata = event.blockMetadata;
-			EntityPlayerMP player = (EntityPlayerMP)event.getPlayer();
-			WorldServer world = player.getServerForPlayer();
+			EntityPlayer player = event.getPlayer();
+			World world = player.worldObj;
 			int x = event.x;
 			int y = event.y;
 			int z = event.z;
 			ItemStack itemstack = player.getCurrentEquippedItem();
 
-			if (itemstack != null && itemstack.getItem() != null && (block == Blocks.ice || block == Blocks.packed_ice || block == FrozenBlocks.slippery_ice))
+			if (itemstack != null && itemstack.getItem() != null && FrozenUtils.isIceBlock(block))
 			{
 				Item item = itemstack.getItem();
 
@@ -355,26 +354,29 @@ public class FrozenEventHooks
 
 				if (item instanceof ItemPickaxe || item.getToolClasses(itemstack).contains("pickaxe"))
 				{
-					int rate = 8;
-
 					world.playAuxSFXAtEntity(player, 2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
 					world.setBlockToAir(x, y, z);
 
-					if (EnchantmentHelper.getSilkTouchModifier(player))
+					if (!world.isRemote)
 					{
-						rate = 1;
-					}
-					else if (item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equalsIgnoreCase("ice"))
-					{
-						rate = 4;
-					}
+						int rate = 5;
 
-					if (rate == 1 || rate > 1 && world.rand.nextInt(rate) == 0)
-					{
-						EntityItem entity = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(block, 1, metadata));
-						entity.delayBeforeCanPickup = 10;
+						if (EnchantmentHelper.getSilkTouchModifier(player))
+						{
+							rate = 1;
+						}
+						else if (item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equalsIgnoreCase("ice"))
+						{
+							rate = 2;
+						}
 
-						world.spawnEntityInWorld(entity);
+						if (rate == 1 || rate > 1 && world.rand.nextInt(rate) == 0)
+						{
+							EntityItem entity = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(block, 1, metadata));
+							entity.delayBeforeCanPickup = 10;
+
+							world.spawnEntityInWorld(entity);
+						}
 					}
 
 					event.setCanceled(true);

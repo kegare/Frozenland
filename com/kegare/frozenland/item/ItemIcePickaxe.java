@@ -19,7 +19,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,8 +29,8 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 import com.kegare.frozenland.api.IItemIceTool;
-import com.kegare.frozenland.block.FrozenBlocks;
 import com.kegare.frozenland.core.Frozenland;
+import com.kegare.frozenland.util.FrozenUtils;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.relauncher.Side;
@@ -124,11 +123,11 @@ public class ItemIcePickaxe extends ItemPickaxe implements IItemIceTool
 	@Override
 	public boolean onBlockDestroyed(ItemStack itemstack, World world, Block block, int x, int y, int z, EntityLivingBase entity)
 	{
-		if (!world.isRemote && (block == Blocks.ice || block == Blocks.packed_ice || block == FrozenBlocks.slippery_ice))
+		if (FrozenUtils.isIceBlock(block))
 		{
 			world.setBlockToAir(x, y, z);
 
-			if (EnchantmentHelper.getSilkTouchModifier(entity) || random.nextBoolean())
+			if (!world.isRemote && (EnchantmentHelper.getSilkTouchModifier(entity) || random.nextBoolean()))
 			{
 				EntityItem item = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(block));
 				item.delayBeforeCanPickup = 10;

@@ -86,7 +86,7 @@ public class ItemDimensionalBook extends ItemBook
 						float yaw = pos.getFloat("Yaw");
 						float pitch = pos.getFloat("Pitch");
 
-						thePlayer = FrozenUtils.forceTeleport(thePlayer, dim, true, posX, posY, posZ, yaw, pitch);
+						FrozenUtils.teleportPlayer(thePlayer, dim, posX, posY, posZ, yaw, pitch);
 					}
 					else
 					{
@@ -110,11 +110,11 @@ public class ItemDimensionalBook extends ItemBook
 
 						if (flag)
 						{
-							thePlayer = FrozenUtils.forceTeleport(thePlayer, dim, true, x + 0.5D, y, z + 0.5D, thePlayer.rotationYaw, thePlayer.rotationPitch);
+							FrozenUtils.teleportPlayer(thePlayer, dim, x + 0.5D, y, z + 0.5D, thePlayer.rotationYaw, thePlayer.rotationPitch);
 						}
 						else
 						{
-							thePlayer = FrozenUtils.forceTeleport(thePlayer, dim, true);
+							FrozenUtils.teleportPlayer(thePlayer, dim);
 						}
 					}
 
