@@ -28,11 +28,14 @@ import com.kegare.frozenland.block.BlockStairsSlipperyIce;
 import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.world.TeleporterDummy;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 public class FrozenUtils
 {
+	public static boolean mcpc = FMLCommonHandler.instance().getModName().contains("mcpc");
+
 	public static ModContainer getModContainer()
 	{
 		ModContainer mod = Loader.instance().getIndexedModList().get(Frozenland.MODID);
@@ -68,14 +71,13 @@ public class FrozenUtils
 		{
 			player.isDead = false;
 			player.forceSpawn = true;
-			player.timeUntilPortal = player.getPortalCooldown();
 			player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new TeleporterDummy(player.mcServer.worldServerForDimension(dim)));
 			player.addExperienceLevel(0);
 		}
 
 		WorldServer world = player.getServerForPlayer();
-		ChunkCoordinates spawn;
-		String key = "Caveworld:LastForceTeleport." + dim;
+		ChunkCoordinates coord;
+		String key = "Frozenland:LastTeleport." + dim;
 		int x, y, z;
 
 		if (player.getEntityData().hasKey(key))
@@ -84,16 +86,16 @@ public class FrozenUtils
 			x = data.getInteger("PosX");
 			y = data.getInteger("PosY");
 			z = data.getInteger("PosZ");
-			spawn = new ChunkCoordinates(x, y, z);
+			coord = new ChunkCoordinates(x, y, z);
 		}
 		else
 		{
-			spawn = world.getSpawnPoint();
+			coord = world.getSpawnPoint();
 		}
 
-		x = spawn.posX;
-		y = spawn.posY;
-		z = spawn.posZ;
+		x = coord.posX;
+		y = coord.posY;
+		z = coord.posZ;
 
 		if (world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z))
 		{
@@ -104,9 +106,15 @@ public class FrozenUtils
 
 			if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
 			{
-				player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+				player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.5D, z + 0.5D, player.rotationYaw, player.rotationPitch);
 
-				NBTTagCompound data = new NBTTagCompound();
+				NBTTagCompound data = player.getEntityData().getCompoundTag(key);
+
+				if (data == null)
+				{
+					data = new NBTTagCompound();
+				}
+
 				data.setInteger("PosX", x);
 				data.setInteger("PosY", y);
 				data.setInteger("PosZ", z);
@@ -117,9 +125,9 @@ public class FrozenUtils
 		{
 			int range = 16;
 
-			for (x = spawn.posX - range; x < spawn.posX + range; ++x)
+			for (x = coord.posX - range; x < coord.posX + range; ++x)
 			{
-				for (z = spawn.posZ - range; z < spawn.posZ + range; ++z)
+				for (z = coord.posZ - range; z < coord.posZ + range; ++z)
 				{
 					for (y = world.getActualHeight() - 3; y > world.provider.getAverageGroundLevel(); --y)
 					{
@@ -136,9 +144,15 @@ public class FrozenUtils
 
 							if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
 							{
-								player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+								player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.5D, z + 0.5D, player.rotationYaw, player.rotationPitch);
 
-								NBTTagCompound data = new NBTTagCompound();
+								NBTTagCompound data = player.getEntityData().getCompoundTag(key);
+
+								if (data == null)
+								{
+									data = new NBTTagCompound();
+								}
+
 								data.setInteger("PosX", x);
 								data.setInteger("PosY", y);
 								data.setInteger("PosZ", z);
@@ -195,11 +209,18 @@ public class FrozenUtils
 			{
 				player.playerNetServerHandler.setPlayerLocation(posX, posY + 0.5D, posZ, yaw, pitch);
 
-				NBTTagCompound data = new NBTTagCompound();
+				String key = "Frozenland:LastTeleport." + dim;
+				NBTTagCompound data = player.getEntityData().getCompoundTag(key);
+
+				if (data == null)
+				{
+					data = new NBTTagCompound();
+				}
+
 				data.setInteger("PosX", x);
 				data.setInteger("PosY", y);
 				data.setInteger("PosZ", z);
-				player.getEntityData().setTag("Caveworld:LastForceTeleport." + dim, data);
+				player.getEntityData().setTag(key, data);
 
 				return true;
 			}

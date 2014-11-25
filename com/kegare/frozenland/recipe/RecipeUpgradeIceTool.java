@@ -9,14 +9,16 @@
 
 package com.kegare.frozenland.recipe;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockIce;
+import net.minecraft.block.BlockPackedIce;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
+import com.kegare.frozenland.block.BlockSlipperyIce;
 
 public class RecipeUpgradeIceTool implements IRecipe
 {
@@ -28,29 +30,39 @@ public class RecipeUpgradeIceTool implements IRecipe
 			return false;
 		}
 
-		int i = 0;
+		int ice = 0;
 
 		for (int row = 0; row < 3; ++row)
 		{
 			for (int column = 0; column < 3; ++column)
 			{
-				if (row != 1 && column == 1 || row == 1 && column != 1)
+				if (row == 1 && column == 1)
 				{
-					ItemStack itemstack = crafting.getStackInRowAndColumn(row, column);
+					continue;
+				}
 
-					if (itemstack != null && itemstack.getItem() != null &&
-						(itemstack.getItem() == Item.getItemFromBlock(Blocks.ice) || itemstack.getItem() == Item.getItemFromBlock(Blocks.packed_ice)))
+				ItemStack itemstack = crafting.getStackInRowAndColumn(row, column);
+
+				if (itemstack != null && itemstack.getItem() != null)
+				{
+					Block block = Block.getBlockFromItem(itemstack.getItem());
+
+					if (block instanceof BlockIce || block instanceof BlockPackedIce || block instanceof BlockSlipperyIce)
 					{
-						if (++i >= 4)
+						if (row != 1 && column == 1 || row == 1 && column != 1)
 						{
-							return true;
+							++ice;
 						}
+					}
+					else if (row != 1 && column != 1)
+					{
+						return false;
 					}
 				}
 			}
 		}
 
-		return false;
+		return ice >= 4;
 	}
 
 	@Override
@@ -59,22 +71,34 @@ public class RecipeUpgradeIceTool implements IRecipe
 		ItemStack result = crafting.getStackInRowAndColumn(1, 1).copy();
 		int ice = 0;
 		int packed = 0;
+		int slippery = 0;
 
 		for (int row = 0; row < 3; ++row)
 		{
 			for (int column = 0; column < 3; ++column)
 			{
+				if (row == 1 && column == 1)
+				{
+					continue;
+				}
+
 				ItemStack itemstack = crafting.getStackInRowAndColumn(row, column);
 
 				if (itemstack != null && itemstack.getItem() != null)
 				{
-					if (itemstack.getItem() == Item.getItemFromBlock(Blocks.ice))
+					Block block = Block.getBlockFromItem(itemstack.getItem());
+
+					if (block instanceof BlockSlipperyIce)
 					{
-						++ice;
+						++slippery;
 					}
-					else if (itemstack.getItem() == Item.getItemFromBlock(Blocks.packed_ice))
+					else if (block instanceof BlockPackedIce)
 					{
 						++packed;
+					}
+					else if (block instanceof BlockIce)
+					{
+						++ice;
 					}
 				}
 			}
@@ -86,7 +110,7 @@ public class RecipeUpgradeIceTool implements IRecipe
 		}
 		else
 		{
-			FrozenlandAPI.addIceToolGrade(result, ice + packed * 9);
+			FrozenlandAPI.addIceToolGrade(result, ice + packed * 9 + slippery * 9 * 9);
 		}
 
 		return result;

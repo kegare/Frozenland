@@ -23,6 +23,7 @@ import net.minecraftforge.client.IRenderHandler;
 import com.kegare.frozenland.api.FrozenlandAPI;
 import com.kegare.frozenland.client.renderer.FrozenlandSkyRenderer;
 import com.kegare.frozenland.client.renderer.FrozenlandWheatherRenderer;
+import com.kegare.frozenland.util.FrozenUtils;
 import com.kegare.frozenland.world.gen.StructureVillagePieces;
 import com.kegare.frozenland.world.gen.StructureVillageStart;
 
@@ -65,19 +66,24 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	@Override
 	public String getSaveFolder()
 	{
-		return "DIM-Frozenland";
+		if (FrozenUtils.mcpc)
+		{
+			return "DIM" + dimensionId;
+		}
+
+		return "DIM-" + getDimensionName();
 	}
 
 	@Override
 	public String getWelcomeMessage()
 	{
-		return "Entering the Frozenland";
+		return "Entering the " + getDimensionName();
 	}
 
 	@Override
 	public String getDepartMessage()
 	{
-		return "Leaving the Frozenland";
+		return "Leaving the " + getDimensionName();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -200,7 +206,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	@Override
 	public float getStarBrightness(float ticks)
 	{
-		return super.getStarBrightness(ticks) * 1.75F;
+		return super.getStarBrightness(ticks) * 1.65F;
 	}
 
 	@Override

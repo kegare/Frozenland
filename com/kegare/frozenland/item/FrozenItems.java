@@ -16,10 +16,12 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
 import com.kegare.frozenland.core.Config;
+import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.recipe.RecipeUpgradeIceTool;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -165,5 +167,7 @@ public class FrozenItems
 		}
 
 		GameRegistry.addRecipe(new RecipeUpgradeIceTool());
+
+		RecipeSorter.register(Frozenland.MODID + ":upgradeicetool", RecipeUpgradeIceTool.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
 	}
 }

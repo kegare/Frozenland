@@ -129,22 +129,22 @@ public class ChunkProviderFrozenland implements IChunkProvider
 
 			for (int l = 0; l < 4; ++l)
 			{
-				int k1 = (j + l) * 33;
-				int l1 = (j + l + 1) * 33;
+				int i0 = (j + l) * 33;
+				int i1 = (j + l + 1) * 33;
 				int i2 = (k + l) * 33;
-				int j2 = (k + l + 1) * 33;
+				int i3 = (k + l + 1) * 33;
 
 				for (int m = 0; m < 32; ++m)
 				{
 					double d0 = 0.125D;
-					double d1 = noiseField[k1 + m];
-					double d2 = noiseField[l1 + m];
+					double d1 = noiseField[i0 + m];
+					double d2 = noiseField[i1 + m];
 					double d3 = noiseField[i2 + m];
-					double d4 = noiseField[j2 + m];
-					double d5 = (noiseField[k1 + m + 1] - d1) * d0;
-					double d6 = (noiseField[l1 + m + 1] - d2) * d0;
+					double d4 = noiseField[i3 + m];
+					double d5 = (noiseField[i0 + m + 1] - d1) * d0;
+					double d6 = (noiseField[i1 + m + 1] - d2) * d0;
 					double d7 = (noiseField[i2 + m + 1] - d3) * d0;
-					double d8 = (noiseField[j2 + m + 1] - d4) * d0;
+					double d8 = (noiseField[i3 + m + 1] - d4) * d0;
 
 					for (int n = 0; n < 8; ++n)
 					{
@@ -154,9 +154,9 @@ public class ChunkProviderFrozenland implements IChunkProvider
 						double d12 = (d3 - d1) * d9;
 						double d13 = (d4 - d2) * d9;
 
-						for (int i3 = 0; i3 < 4; ++i3)
+						for (int o = 0; o < 4; ++o)
 						{
-							int index = i3 + i * 4 << 12 | 0 + l * 4 << 8 | m * 8 + n;
+							int index = o + i * 4 << 12 | 0 + l * 4 << 8 | m * 8 + n;
 							short height = 256;
 							index -= height;
 							double d14 = 0.25D;
@@ -348,7 +348,7 @@ public class ChunkProviderFrozenland implements IChunkProvider
 		rand.setSeed(chunkX * 341873128712L + chunkZ * 132897987541L);
 
 		Block[] blocks = new Block[65536];
-		byte[] meta = new byte[65536];
+		byte[] meta = new byte[blocks.length];
 		generateTerrain(chunkX, chunkZ, blocks);
 		biomesForGeneration = worldObj.getWorldChunkManager().loadBlockGeneratorData(biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
 		replaceBlocksForBiome(chunkX, chunkZ, blocks, meta, biomesForGeneration);
@@ -402,6 +402,7 @@ public class ChunkProviderFrozenland implements IChunkProvider
 		}
 
 		chunk.generateSkylightMap();
+		chunk.resetRelightChecks();
 
 		return chunk;
 	}
