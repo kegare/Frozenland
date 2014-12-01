@@ -28,6 +28,7 @@ import com.kegare.frozenland.block.BlockStairsSlipperyIce;
 import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.world.TeleporterDummy;
 
+import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -46,7 +47,7 @@ public class FrozenUtils
 
 			if (mod == null || mod.getModId() != Frozenland.MODID)
 			{
-				return null;
+				return new DummyModContainer(Frozenland.metadata);
 			}
 		}
 
@@ -60,20 +61,40 @@ public class FrozenUtils
 			block instanceof BlockSlabSlipperyIce || block instanceof BlockStairsSlipperyIce);
 	}
 
-	public static boolean teleportPlayer(EntityPlayerMP player, int dim)
+	public static void setPlayerLocation(EntityPlayerMP player, double posX, double posY, double posZ)
 	{
-		if (!DimensionManager.isDimensionRegistered(dim))
-		{
-			return false;
-		}
+		setPlayerLocation(player, posX, posY, posZ, player.rotationYaw, player.rotationPitch);
+	}
 
+	public static void setPlayerLocation(EntityPlayerMP player, double posX, double posY, double posZ, float yaw, float pitch)
+	{
+		player.mountEntity(null);
+		player.playerNetServerHandler.setPlayerLocation(posX, posY, posZ, yaw, pitch);
+	}
+
+	public static boolean transferPlayer(EntityPlayerMP player, int dim)
+	{
 		if (dim != player.dimension)
 		{
+			if (!DimensionManager.isDimensionRegistered(dim))
+			{
+				return false;
+			}
+
 			player.isDead = false;
 			player.forceSpawn = true;
 			player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new TeleporterDummy(player.mcServer.worldServerForDimension(dim)));
 			player.addExperienceLevel(0);
+
+			return true;
 		}
+
+		return false;
+	}
+
+	public static boolean teleportPlayer(EntityPlayerMP player, int dim)
+	{
+		transferPlayer(player, dim);
 
 		WorldServer world = player.getServerForPlayer();
 		ChunkCoordinates coord;
@@ -106,7 +127,7 @@ public class FrozenUtils
 
 			if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
 			{
-				player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.5D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+				setPlayerLocation(player, x + 0.5D, y + 0.5D, z + 0.5D);
 
 				NBTTagCompound data = player.getEntityData().getCompoundTag(key);
 
@@ -119,6 +140,8 @@ public class FrozenUtils
 				data.setInteger("PosY", y);
 				data.setInteger("PosZ", z);
 				player.getEntityData().setTag(key, data);
+
+				return true;
 			}
 		}
 		else
@@ -144,7 +167,7 @@ public class FrozenUtils
 
 							if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
 							{
-								player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.5D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+								setPlayerLocation(player, x + 0.5D, y + 0.5D, z + 0.5D);
 
 								NBTTagCompound data = player.getEntityData().getCompoundTag(key);
 
@@ -166,9 +189,9 @@ public class FrozenUtils
 			}
 
 			x = 0;
-			y = 30;
+			y = 64;
 			z = 0;
-			player.playerNetServerHandler.setPlayerLocation(x + 0.5D, y + 0.8D, z + 0.5D, player.rotationYaw, player.rotationPitch);
+			setPlayerLocation(player, x + 0.5D, y + 0.5D, z + 0.5D);
 			world.setBlockToAir(x, y, z);
 			world.setBlockToAir(x, y + 1, z);
 			world.setBlock(x, y - 1, z, Blocks.stone);
@@ -179,19 +202,7 @@ public class FrozenUtils
 
 	public static boolean teleportPlayer(EntityPlayerMP player, int dim, double posX, double posY, double posZ, float yaw, float pitch)
 	{
-		if (!DimensionManager.isDimensionRegistered(dim))
-		{
-			return false;
-		}
-
-		if (dim != player.dimension)
-		{
-			player.isDead = false;
-			player.forceSpawn = true;
-			player.timeUntilPortal = player.getPortalCooldown();
-			player.mcServer.getConfigurationManager().transferPlayerToDimension(player, dim, new TeleporterDummy(player.mcServer.worldServerForDimension(dim)));
-			player.addExperienceLevel(0);
-		}
+		transferPlayer(player, dim);
 
 		WorldServer world = player.getServerForPlayer();
 		int x = MathHelper.floor_double(posX);
@@ -207,7 +218,7 @@ public class FrozenUtils
 
 			if (!world.isAirBlock(x, y - 1, z) && !world.getBlock(x, y - 1, z).getMaterial().isLiquid())
 			{
-				player.playerNetServerHandler.setPlayerLocation(posX, posY + 0.5D, posZ, yaw, pitch);
+				setPlayerLocation(player, posX, y + 0.5D, posZ, yaw, pitch);
 
 				String key = "Frozenland:LastTeleport." + dim;
 				NBTTagCompound data = player.getEntityData().getCompoundTag(key);

@@ -17,11 +17,13 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -46,6 +48,7 @@ import shift.sextiarysector.api.SextiarySectorAPI;
 import com.kegare.frozenland.api.FrozenlandAPI;
 import com.kegare.frozenland.core.Config;
 import com.kegare.frozenland.core.Frozenland;
+import com.kegare.frozenland.item.FrozenItems;
 import com.kegare.frozenland.item.ItemIcePickaxe;
 import com.kegare.frozenland.network.DimSyncMessage;
 import com.kegare.frozenland.plugin.sextiarysector.SextiarySectorPlugin;
@@ -243,9 +246,14 @@ public class FrozenEventHooks
 				}
 			}
 		}
-		else if (event.entityLiving instanceof EntityLiving && !(event.entityLiving instanceof EntityVillager))
+		else if (event.entityLiving instanceof EntityLiving)
 		{
 			EntityLiving living = (EntityLiving)event.entityLiving;
+
+			if (living instanceof EntityVillager || living instanceof EntityGolem)
+			{
+				return;
+			}
 
 			if (FrozenlandAPI.isEntityInFrozenland(living))
 			{
@@ -377,6 +385,27 @@ public class FrozenEventHooks
 
 							world.spawnEntityInWorld(entity);
 						}
+					}
+
+					event.setCanceled(true);
+				}
+				else if (Config.iceball && item == Items.snowball)
+				{
+					world.playAuxSFXAtEntity(player, 2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
+					world.setBlockToAir(x, y, z);
+
+					int stack = itemstack.stackSize;
+
+					itemstack.stackSize = 0;
+					player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+
+					if (!world.isRemote)
+					{
+						stack = Math.max(stack / 2, 1);
+						EntityItem entity = new EntityItem(world, x + 0.5D, y + 0.5D, z + 0.5D, new ItemStack(FrozenItems.iceball, player.getRNG().nextInt(stack) + stack));
+						entity.delayBeforeCanPickup = 10;
+
+						world.spawnEntityInWorld(entity);
 					}
 
 					event.setCanceled(true);

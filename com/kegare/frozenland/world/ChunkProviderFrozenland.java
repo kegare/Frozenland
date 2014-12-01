@@ -322,8 +322,8 @@ public class ChunkProviderFrozenland implements IChunkProvider
 			return;
 		}
 
-		double d0 = 0.03125D;
-		stoneNoise = noiseGen4.func_151599_a(stoneNoise, chunkX * 16, chunkZ * 16, 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+		double noise = 0.03125D;
+		stoneNoise = noiseGen4.func_151599_a(stoneNoise, chunkX * 16, chunkZ * 16, 16, 16, noise * 2.0D, noise * 2.0D, 1.0D);
 
 		for (int i = 0; i < 16; ++i)
 		{

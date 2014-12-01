@@ -30,7 +30,6 @@ import com.google.gson.Gson;
 import com.kegare.frozenland.core.Frozenland;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 
@@ -57,8 +56,7 @@ public class Version implements Runnable
 		CURRENT = Optional.of(Strings.nullToEmpty(Frozenland.metadata.version));
 		LATEST = Optional.fromNullable(CURRENT.orNull());
 
-		ModContainer mod = FrozenUtils.getModContainer();
-		File file = mod == null ? null : mod.getSource();
+		File file = FrozenUtils.getModContainer().getSource();
 
 		if (file != null && file.exists())
 		{

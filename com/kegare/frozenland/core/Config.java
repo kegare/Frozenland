@@ -43,6 +43,7 @@ public class Config
 	public static boolean axeIce;
 	public static boolean shovelIce;
 	public static boolean hoeIce;
+	public static boolean iceball;
 
 	public static boolean packedIceCraftRecipe;
 
@@ -171,6 +172,12 @@ public class Config
 		prop.comment += " [default: " + prop.getDefault() + "]";
 		propOrder.add(prop.getName());
 		hoeIce = prop.getBoolean(hoeIce);
+		prop = config.get(category, "iceball", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		iceball = prop.getBoolean(iceball);
 
 		config.setCategoryRequiresMcRestart(category, true);
 		config.setCategoryPropertyOrder(category, propOrder);

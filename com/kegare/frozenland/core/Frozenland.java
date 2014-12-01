@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Level;
 
 import com.kegare.frozenland.api.FrozenlandAPI;
 import com.kegare.frozenland.block.FrozenBlocks;
+import com.kegare.frozenland.entity.EntityIceball;
 import com.kegare.frozenland.handler.FrozenEventHooks;
 import com.kegare.frozenland.handler.FrozenlandAPIHandler;
 import com.kegare.frozenland.item.FrozenItems;
@@ -35,12 +36,14 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod
@@ -58,6 +61,9 @@ public class Frozenland
 
 	@Metadata(MODID)
 	public static ModMetadata metadata;
+
+	@SidedProxy(modId = MODID, clientSide = MOD_PACKAGE + ".client.ClientProxy", serverSide = MOD_PACKAGE + ".core.CommonProxy")
+	public static CommonProxy proxy;
 
 	public static final SimpleNetworkWrapper network = new SimpleNetworkWrapper(MODID);
 
@@ -90,7 +96,13 @@ public class Frozenland
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		int id = Config.dimensionFrozenland;
+		int id = 0;
+
+		EntityRegistry.registerModEntity(EntityIceball.class, "Iceball", id++, this, 128, 1, true);
+
+		proxy.registerRenderers();
+
+		id = Config.dimensionFrozenland;
 		DimensionManager.registerProviderType(id, WorldProviderFrozenland.class, true);
 		DimensionManager.registerDimension(id, id);
 

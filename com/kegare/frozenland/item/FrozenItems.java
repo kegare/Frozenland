@@ -37,6 +37,7 @@ public class FrozenItems
 	public static final ItemIceAxe ice_axe = new ItemIceAxe("axeIce");
 	public static final ItemIceSpade ice_shovel = new ItemIceSpade("shovelIce");
 	public static final ItemIceHoe ice_hoe = new ItemIceHoe("hoeIce");
+	public static final ItemIceball iceball = new ItemIceball("iceball");
 
 	public static void registerItems()
 	{
@@ -164,6 +165,13 @@ public class FrozenItems
 
 			OreDictionary.registerOre("hoeIce", ice_hoe);
 			OreDictionary.registerOre("iceHoe", ice_hoe);
+		}
+
+		if (Config.iceball)
+		{
+			GameRegistry.registerItem(iceball, "iceball");
+
+			OreDictionary.registerOre("iceball", iceball);
 		}
 
 		GameRegistry.addRecipe(new RecipeUpgradeIceTool());

@@ -29,6 +29,8 @@ frozenland.config.items.shovelIce=氷のシャベル
 frozenland.config.items.shovelIce.tooltip=氷のシャベルを追加します。
 frozenland.config.items.hoeIce=氷のクワ
 frozenland.config.items.hoeIce.tooltip=氷のクワを追加します。
+frozenland.config.items.iceball=氷玉
+frozenland.config.items.iceball.tooltip=氷玉を追加します。
 frozenland.config.recipes.packedIceCraftRecipe=氷塊のクラフトレシピ
 frozenland.config.recipes.packedIceCraftRecipe.tooltip=氷塊のクラフトレシピを追加します。
 frozenland.config.frozenland.dimensionFrozenland=Frozenland ディメンションID
@@ -61,3 +63,6 @@ item.pickaxeIce.name=氷のツルハシ
 item.axeIce.name=氷の斧
 item.shovelIce.name=氷のシャベル
 item.hoeIce.name=氷のクワ
+item.iceball.name=氷玉
+
+entity.Iceball.name=氷玉

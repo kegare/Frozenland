@@ -9,18 +9,17 @@
 
 package com.kegare.frozenland.item;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import shift.sextiarysector.api.IDrink;
+import net.minecraft.world.World;
+import shift.sextiarysector.api.SextiarySectorAPI;
 
 import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.plugin.sextiarysector.SextiarySectorPlugin;
 
-import cpw.mods.fml.common.Optional.Interface;
-
-@Interface(iface = "shift.sextiarysector.api.IDrink", modid = SextiarySectorPlugin.MODID, striprefs = true)
-public class ItemIceStick extends ItemFood implements IDrink
+public class ItemIceStick extends ItemFood
 {
 	public ItemIceStick(String name)
 	{
@@ -34,14 +33,13 @@ public class ItemIceStick extends ItemFood implements IDrink
 	}
 
 	@Override
-	public int getMoisture(ItemStack itemstack)
+	protected void onFoodEaten(ItemStack itemstack, World world, EntityPlayer player)
 	{
-		return 1;
-	}
+		super.onFoodEaten(itemstack, world, player);
 
-	@Override
-	public float getMoistureSaturation(ItemStack itemstack)
-	{
-		return 0.5F;
+		if (!world.isRemote && SextiarySectorPlugin.enabled())
+		{
+			SextiarySectorAPI.addMoistureStats(player, 1, 0.5F);
+		}
 	}
 }
