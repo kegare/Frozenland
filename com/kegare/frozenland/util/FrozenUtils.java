@@ -17,7 +17,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.DerivedWorldInfo;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
 
 import com.kegare.frozenland.block.BlockSlabPackedIce;
@@ -32,6 +35,7 @@ import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class FrozenUtils
 {
@@ -220,23 +224,22 @@ public class FrozenUtils
 			{
 				setPlayerLocation(player, posX, y + 0.5D, posZ, yaw, pitch);
 
-				String key = "Frozenland:LastTeleport." + dim;
-				NBTTagCompound data = player.getEntityData().getCompoundTag(key);
-
-				if (data == null)
-				{
-					data = new NBTTagCompound();
-				}
-
-				data.setInteger("PosX", x);
-				data.setInteger("PosY", y);
-				data.setInteger("PosZ", z);
-				player.getEntityData().setTag(key, data);
-
 				return true;
 			}
 		}
 
 		return teleportPlayer(player, dim);
+	}
+
+	public static WorldInfo getWorldInfo(World world)
+	{
+		WorldInfo worldInfo = world.getWorldInfo();
+
+		if (worldInfo instanceof DerivedWorldInfo)
+		{
+			worldInfo = ObfuscationReflectionHelper.getPrivateValue(DerivedWorldInfo.class, (DerivedWorldInfo)worldInfo, "theWorldInfo", "field_76115_a");
+		}
+
+		return worldInfo;
 	}
 }

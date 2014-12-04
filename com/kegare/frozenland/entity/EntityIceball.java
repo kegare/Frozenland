@@ -11,12 +11,12 @@ package com.kegare.frozenland.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class EntityIceball extends EntityThrowable
+public class EntityIceball extends EntitySnowball
 {
 	public EntityIceball(World world)
 	{
@@ -42,7 +42,7 @@ public class EntityIceball extends EntityThrowable
 
 			if (moving.entityHit instanceof EntityBlaze)
 			{
-				damage = 5;
+				damage = 4;
 			}
 
 			moving.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, getThrower()), damage);

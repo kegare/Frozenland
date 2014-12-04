@@ -9,11 +9,14 @@
 
 package com.kegare.frozenland.core;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.File;
 import java.util.List;
 
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -21,10 +24,14 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 import com.kegare.frozenland.util.FrozenLog;
+import com.kegare.frozenland.world.WorldProviderFrozenland;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class Config
+public class Config implements IMessage, IMessageHandler<Config, IMessage>
 {
 	public static Configuration config;
 
@@ -54,6 +61,35 @@ public class Config
 	public static boolean generateMineshaft;
 	public static boolean generateVillage;
 	public static boolean generateDungeons;
+
+	public static void refreshDimension(int dim)
+	{
+		int old = dimensionFrozenland;
+		dimensionFrozenland = dim;
+
+		if (old != 0 && old != dim && DimensionManager.isDimensionRegistered(old))
+		{
+			DimensionManager.unregisterProviderType(old);
+			DimensionManager.unregisterDimension(old);
+
+			FrozenLog.fine("Unregister the dimension (" + old + ")");
+		}
+
+		if (old != dim)
+		{
+			if (old != 0 && DimensionManager.isDimensionRegistered(dim))
+			{
+				dim = old;
+			}
+
+			if (DimensionManager.registerProviderType(dim, WorldProviderFrozenland.class, true))
+			{
+				DimensionManager.registerDimension(dim, dim);
+
+				FrozenLog.fine("Register the Frozenland dimension (" + dim + ")");
+			}
+		}
+	}
 
 	public static void syncConfig()
 	{
@@ -195,11 +231,11 @@ public class Config
 
 		category = "frozenland";
 		prop = config.get(category, "dimensionFrozenland", -8);
-		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
 		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
 		prop.comment += " [range: " + prop.getMinValue() + " ~ " + prop.getMaxValue() + ", default: " + prop.getDefault() + "]";
 		propOrder.add(prop.getName());
-		dimensionFrozenland = MathHelper.clamp_int(prop.getInt(dimensionFrozenland), Integer.parseInt(prop.getMinValue()), Integer.parseInt(prop.getMaxValue()));
+		refreshDimension(MathHelper.clamp_int(prop.getInt(dimensionFrozenland), Integer.parseInt(prop.getMinValue()), Integer.parseInt(prop.getMaxValue())));
 		prop = config.get(category, "biomeFrozenland", 85);
 		prop.setMinValue(0).setMaxValue(255).setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
 		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
@@ -243,5 +279,37 @@ public class Config
 		{
 			config.save();
 		}
+	}
+
+	@Override
+	public void fromBytes(ByteBuf buf)
+	{
+		dimensionFrozenland = buf.readInt();
+		biomeFrozenland = buf.readInt();
+		generateCaves = buf.readBoolean();
+		generateRavine = buf.readBoolean();
+		generateMineshaft = buf.readBoolean();
+		generateVillage = buf.readBoolean();
+		generateDungeons = buf.readBoolean();
+	}
+
+	@Override
+	public void toBytes(ByteBuf buf)
+	{
+		buf.writeInt(dimensionFrozenland);
+		buf.writeInt(biomeFrozenland);
+		buf.writeBoolean(generateCaves);
+		buf.writeBoolean(generateRavine);
+		buf.writeBoolean(generateMineshaft);
+		buf.writeBoolean(generateVillage);
+		buf.writeBoolean(generateDungeons);
+	}
+
+	@Override
+	public IMessage onMessage(Config message, MessageContext ctx)
+	{
+		refreshDimension(dimensionFrozenland);
+
+		return null;
 	}
 }

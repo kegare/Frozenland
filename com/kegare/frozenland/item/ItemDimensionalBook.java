@@ -10,6 +10,7 @@
 package com.kegare.frozenland.item;
 
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -46,47 +47,60 @@ public class ItemDimensionalBook extends ItemBook
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player)
 	{
-		if (!world.isRemote && player.onGround)
+		if (player instanceof EntityPlayerMP && player.onGround)
 		{
-			NBTTagCompound nbt = itemstack.getTagCompound();
 			EntityPlayerMP thePlayer = (EntityPlayerMP)player;
 			int dim = thePlayer.dimension == dimensionId ? 0 : dimensionId;
+			NBTTagCompound nbt = itemstack.getTagCompound();
 
 			if (nbt != null && nbt.getString("Owner").equals(thePlayer.getGameProfile().getId().toString()))
 			{
-				if (thePlayer.capabilities.isCreativeMode || nbt.getLong("LastUseTime") + (world.difficultySetting.getDifficultyId() > 2 ? 12000L : 6000L) < world.getTotalWorldTime())
+				if (thePlayer.capabilities.isCreativeMode || !nbt.hasKey("LastUseTime") || nbt.getLong("LastUseTime") + 6000L < world.getTotalWorldTime())
 				{
-					if (thePlayer.dimension == dimensionId && nbt.hasKey("LastDim"))
-					{
-						dim = nbt.getInteger("LastDim");
+					NBTTagCompound pos = nbt.getCompoundTag("LastUsePos." + thePlayer.dimension);
 
-						if (!DimensionManager.isDimensionRegistered(dim) || dim == 1)
-						{
-							dim = 0;
-						}
+					if (pos == null)
+					{
+						pos = new NBTTagCompound();
 					}
 
-					NBTTagCompound pos = new NBTTagCompound();
 					pos.setDouble("PosX", thePlayer.posX);
 					pos.setDouble("PosY", thePlayer.posY);
 					pos.setDouble("PosZ", thePlayer.posZ);
 					pos.setFloat("Yaw", thePlayer.rotationYaw);
 					pos.setFloat("Pitch", thePlayer.rotationPitch);
-					nbt.setInteger("LastDim", thePlayer.dimension);
 					nbt.setTag("LastUsePos." + thePlayer.dimension, pos);
 
+					if (!thePlayer.capabilities.isCreativeMode)
+					{
+						nbt.setLong("LastUseTime", world.getTotalWorldTime());
+					}
+
+					if (thePlayer.dimension == dimensionId)
+					{
+						if (nbt.hasKey("LastDim"))
+						{
+							dim = nbt.getInteger("LastDim");
+
+							if (!DimensionManager.isDimensionRegistered(dim))
+							{
+								dim = 0;
+							}
+						}
+					}
+					else
+					{
+						nbt.setInteger("LastDim", thePlayer.dimension);
+					}
+
 					world.playSoundToNearExcept(thePlayer, "frozenland:dimensional_teleport", 0.5F, 1.0F);
+
+					boolean result;
 
 					if (nbt.hasKey("LastUsePos." + dim))
 					{
 						pos = nbt.getCompoundTag("LastUsePos." + dim);
-						double posX = pos.getDouble("PosX");
-						double posY = pos.getDouble("PosY");
-						double posZ = pos.getDouble("PosZ");
-						float yaw = pos.getFloat("Yaw");
-						float pitch = pos.getFloat("Pitch");
-
-						FrozenUtils.teleportPlayer(thePlayer, dim, posX, posY, posZ, yaw, pitch);
+						result = FrozenUtils.teleportPlayer(thePlayer, dim, pos.getDouble("PosX"), pos.getDouble("PosY"), pos.getDouble("PosZ"), pos.getFloat("Yaw"), pos.getFloat("Pitch"));
 					}
 					else
 					{
@@ -110,19 +124,17 @@ public class ItemDimensionalBook extends ItemBook
 
 						if (flag)
 						{
-							FrozenUtils.teleportPlayer(thePlayer, dim, x + 0.5D, y, z + 0.5D, thePlayer.rotationYaw, thePlayer.rotationPitch);
+							result = FrozenUtils.teleportPlayer(thePlayer, dim, x + 0.5D, y, z + 0.5D, thePlayer.rotationYaw, thePlayer.rotationPitch);
 						}
 						else
 						{
-							FrozenUtils.teleportPlayer(thePlayer, dim);
+							result = FrozenUtils.teleportPlayer(thePlayer, dim);
 						}
 					}
 
-					thePlayer.worldObj.playSoundAtEntity(thePlayer, "frozenland:dimensional_teleport", 0.75F, 1.0F);
-
-					if (!thePlayer.capabilities.isCreativeMode)
+					if (result)
 					{
-						nbt.setLong("LastUseTime", world.getTotalWorldTime());
+						thePlayer.worldObj.playSoundAtEntity(thePlayer, "frozenland:dimensional_teleport", 0.75F, 1.0F);
 					}
 				}
 			}
@@ -136,7 +148,7 @@ public class ItemDimensionalBook extends ItemBook
 	{
 		super.onUpdate(itemstack, world, entity, slot, current);
 
-		if (!world.isRemote && entity instanceof EntityPlayer)
+		if (entity instanceof EntityPlayer)
 		{
 			NBTTagCompound nbt = itemstack.getTagCompound();
 			EntityPlayer player = (EntityPlayer)entity;
@@ -151,7 +163,6 @@ public class ItemDimensionalBook extends ItemBook
 			if (!nbt.hasKey("Owner"))
 			{
 				nbt.setString("Owner", player.getGameProfile().getId().toString());
-				nbt.setString("OwnerName", player.getGameProfile().getName());
 			}
 		}
 	}
@@ -161,20 +172,16 @@ public class ItemDimensionalBook extends ItemBook
 	{
 		super.onCreated(itemstack, world, player);
 
-		if (!world.isRemote)
+		NBTTagCompound nbt = itemstack.getTagCompound();
+
+		if (nbt == null)
 		{
-			NBTTagCompound nbt = itemstack.getTagCompound();
+			nbt = new NBTTagCompound();
 
-			if (nbt == null)
-			{
-				nbt = new NBTTagCompound();
-
-				itemstack.setTagCompound(nbt);
-			}
-
-			nbt.setString("Owner", player.getGameProfile().getId().toString());
-			nbt.setString("OwnerName", player.getGameProfile().getName());
+			itemstack.setTagCompound(nbt);
 		}
+
+		nbt.setString("Owner", player.getGameProfile().getId().toString());
 	}
 
 	@Override
@@ -183,15 +190,38 @@ public class ItemDimensionalBook extends ItemBook
 		return 0;
 	}
 
+	@Override
+	public boolean isBookEnchantable(ItemStack itemstack, ItemStack book)
+	{
+		return false;
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void addInformation(ItemStack itemstack, EntityPlayer player, List list, boolean advanced)
 	{
 		NBTTagCompound nbt = itemstack.getTagCompound();
 
-		if (nbt != null && nbt.hasKey("OwnerName"))
+		if (nbt != null && nbt.hasKey("Owner"))
 		{
-			list.add(EnumChatFormatting.ITALIC + I18n.format("item.dimensionalBook.owner") + ": " + EnumChatFormatting.RESET + nbt.getString("OwnerName"));
+			EntityPlayer owner = player.worldObj.func_152378_a(UUID.fromString(nbt.getString("Owner")));
+			String name;
+
+			if (owner == null)
+			{
+				name = "Unknown";
+			}
+			else
+			{
+				name = owner.getDisplayName();
+
+				if (!name.equals(owner.getGameProfile().getName()))
+				{
+					name += " (" + owner.getGameProfile().getName() + ")";
+				}
+			}
+
+			list.add(EnumChatFormatting.ITALIC + I18n.format("item.dimensionalBook.owner") + ": " + EnumChatFormatting.RESET + name);
 		}
 	}
 

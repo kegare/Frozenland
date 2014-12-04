@@ -16,9 +16,11 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.ClickEvent;
@@ -28,7 +30,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
-import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumChatFormatting;
@@ -37,6 +38,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate;
@@ -50,12 +52,12 @@ import com.kegare.frozenland.core.Config;
 import com.kegare.frozenland.core.Frozenland;
 import com.kegare.frozenland.item.FrozenItems;
 import com.kegare.frozenland.item.ItemIcePickaxe;
-import com.kegare.frozenland.network.DimSyncMessage;
 import com.kegare.frozenland.plugin.sextiarysector.SextiarySectorPlugin;
 import com.kegare.frozenland.util.FrozenUtils;
 import com.kegare.frozenland.util.Version;
 import com.kegare.frozenland.util.Version.Status;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -80,10 +82,7 @@ public class FrozenEventHooks
 	{
 		if (event.modID.equals(Frozenland.MODID))
 		{
-			if (Config.config.hasChanged())
-			{
-				Config.config.save();
-			}
+			Config.syncConfig();
 		}
 	}
 
@@ -101,7 +100,7 @@ public class FrozenEventHooks
 			component.appendText(" : " + EnumChatFormatting.YELLOW + Version.getLatest());
 			component.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Frozenland.metadata.url));
 
-			event.handler.handleChat(new S02PacketChat(component));
+			FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(component);
 		}
 	}
 
@@ -110,12 +109,14 @@ public class FrozenEventHooks
 	public void onClientDisconnected(ClientDisconnectionFromServerEvent event)
 	{
 		Frozenland.tabFrozenland.tabIconItem = null;
+
+		Config.syncConfig();
 	}
 
 	@SubscribeEvent
 	public void onServerConnected(ServerConnectionFromClientEvent event)
 	{
-		event.manager.scheduleOutboundPacket(Frozenland.network.getPacketFrom(new DimSyncMessage(FrozenlandAPI.getDimension(), FrozenlandAPI.getBiome().biomeID)));
+		event.manager.scheduleOutboundPacket(Frozenland.network.getPacketFrom(new Config()));
 	}
 
 	@SubscribeEvent
@@ -169,11 +170,22 @@ public class FrozenEventHooks
 	@SubscribeEvent
 	public void onLivingUpdate(LivingUpdateEvent event)
 	{
-		if (event.entityLiving instanceof EntityPlayer)
-		{
-			EntityPlayer player = (EntityPlayer)event.entityLiving;
+		EntityLivingBase entity = event.entityLiving;
 
-			if (!player.capabilities.isCreativeMode && FrozenlandAPI.isEntityInFrozenland(player))
+		if (FrozenlandAPI.isEntityInFrozenland(entity))
+		{
+			if (entity.ticksExisted % 20 == 0 && entity.isBurning())
+			{
+				entity.extinguish();
+			}
+		}
+		else return;
+
+		if (entity instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer)entity;
+
+			if (!player.capabilities.isCreativeMode && player.worldObj.difficultySetting.getDifficultyId() > 0)
 			{
 				if (player.inventory.armorItemInSlot(0) == null)
 				{
@@ -246,91 +258,88 @@ public class FrozenEventHooks
 				}
 			}
 		}
-		else if (event.entityLiving instanceof EntityLiving)
+		else if (entity instanceof EntityLiving)
 		{
-			EntityLiving living = (EntityLiving)event.entityLiving;
+			EntityLiving living = (EntityLiving)entity;
 
-			if (living instanceof EntityVillager || living instanceof EntityGolem)
+			if (living instanceof EntityVillager || living instanceof EntityGolem || living instanceof EntitySquid)
 			{
 				return;
 			}
 
-			if (FrozenlandAPI.isEntityInFrozenland(living))
+			int i = 0;
+			boolean boots = false;
+
+			if (living.func_130225_q(3) != null)
 			{
-				int i = 0;
-				boolean boots = false;
+				++i;
+			}
 
-				if (living.func_130225_q(3) != null)
+			if (living.func_130225_q(2) != null)
+			{
+				++i;
+			}
+
+			if (living.func_130225_q(1) != null)
+			{
+				++i;
+			}
+
+			if (living.func_130225_q(0) != null)
+			{
+				boots = true;
+				++i;
+			}
+
+			if (!boots)
+			{
+				living.motionX *= 0.9D;
+				living.motionZ *= 0.9D;
+			}
+
+			int j = 200;
+
+			if (living.isSprinting())
+			{
+				j /= 3;
+			}
+
+			if (living.ticksExisted % j == 0)
+			{
+				float armor = i / 4.0F;
+				boolean daytime = living.worldObj.isDaytime();
+
+				if (armor <= 0.0F)
 				{
-					++i;
-				}
-
-				if (living.func_130225_q(2) != null)
-				{
-					++i;
-				}
-
-				if (living.func_130225_q(1) != null)
-				{
-					++i;
-				}
-
-				if (living.func_130225_q(0) != null)
-				{
-					boots = true;
-					++i;
-				}
-
-				if (!boots)
-				{
-					living.motionX *= 0.9D;
-					living.motionZ *= 0.9D;
-				}
-
-				int j = 200;
-
-				if (living.isSprinting())
-				{
-					j /= 3;
-				}
-
-				if (living.ticksExisted % j == 0)
-				{
-					float armor = i / 4.0F;
-					boolean daytime = living.worldObj.isDaytime();
-
-					if (armor <= 0.0F)
+					if (daytime)
 					{
-						if (daytime)
-						{
-							living.attackEntityFrom(DamageSource.generic, 2.0F);
-						}
-						else
-						{
-							living.attackEntityFrom(DamageSource.generic, 2.5F);
-						}
+						living.attackEntityFrom(DamageSource.generic, 2.0F);
 					}
-					else if (armor < 0.5F)
+					else
 					{
-						if (daytime)
-						{
-							living.attackEntityFrom(DamageSource.generic, 1.0F);
-						}
-						else
-						{
-							living.attackEntityFrom(DamageSource.generic, 1.5F);
-						}
+						living.attackEntityFrom(DamageSource.generic, 2.5F);
 					}
-					else if (armor < 0.75F)
+				}
+				else if (armor < 0.5F)
+				{
+					if (daytime)
 					{
-						if (daytime)
-						{
-							living.attackEntityFrom(DamageSource.generic, 0.5F);
-						}
-						else
-						{
-							living.attackEntityFrom(DamageSource.generic, 1.0F);
-						}
+						living.attackEntityFrom(DamageSource.generic, 1.0F);
+					}
+					else
+					{
+						living.attackEntityFrom(DamageSource.generic, 1.5F);
+					}
+				}
+				else if (armor < 0.75F)
+				{
+					if (daytime)
+					{
+						living.attackEntityFrom(DamageSource.generic, 0.5F);
+					}
+					else
+					{
+						living.attackEntityFrom(DamageSource.generic, 1.0F);
 					}
 				}
 			}
@@ -417,36 +426,37 @@ public class FrozenEventHooks
 	@SubscribeEvent
 	public void onLivingCheckSpawn(LivingSpawnEvent.CheckSpawn event)
 	{
-		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		if (FrozenlandAPI.isEntityInFrozenland(event.entityLiving) && event.entityLiving instanceof IMob)
 		{
-			if (event.entityLiving instanceof IMob)
-			{
-				event.setResult(Result.DENY);
-			}
+			event.setResult(Result.DENY);
 		}
 	}
 
 	@SubscribeEvent
 	public void onLivingSpecialSpawn(LivingSpawnEvent.SpecialSpawn event)
 	{
-		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		if (FrozenlandAPI.isEntityInFrozenland(event.entityLiving) && event.entityLiving instanceof IMob)
 		{
-			if (event.entityLiving instanceof IMob)
-			{
-				event.setCanceled(true);
-			}
+			event.setCanceled(true);
 		}
 	}
 
 	@SubscribeEvent
 	public void onLivingDespawn(LivingSpawnEvent.AllowDespawn event)
 	{
-		if (event.world.provider.dimensionId == FrozenlandAPI.getDimension())
+		if (FrozenlandAPI.isEntityInFrozenland(event.entityLiving) && event.entityLiving instanceof IMob)
 		{
-			if (event.entityLiving instanceof IMob)
-			{
-				event.setResult(Result.ALLOW);
-			}
+			event.setResult(Result.ALLOW);
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingPackSize(LivingPackSizeEvent event)
+	{
+		if (FrozenlandAPI.isEntityInFrozenland(event.entityLiving) && event.entityLiving instanceof IMob)
+		{
+			event.maxPackSize = 0;
+			event.setResult(Result.ALLOW);
 		}
 	}
 

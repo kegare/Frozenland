@@ -95,12 +95,11 @@ public class FrozenlandSkyRenderer extends IRenderHandler
 		GL11.glPushMatrix();
 		GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(world.getCelestialAngle(ticks) * 360.0F, 1.0F, 0.0F, 0.0F);
-		float f1 = 1.0F - world.getRainStrength(ticks);
-		float f2 = world.getStarBrightness(ticks) * f1;
+		float color = world.getStarBrightness(ticks) * (1.0F - world.getRainStrength(ticks));
 
-		if (f2 > 0.0F)
+		if (color > 0.0F)
 		{
-			GL11.glColor4f(f2, f2, f2, f2);
+			GL11.glColor4f(color, color, color, color);
 			GL11.glCallList(starGLCallList);
 		}
 

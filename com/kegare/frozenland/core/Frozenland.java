@@ -12,7 +12,6 @@ package com.kegare.frozenland.core;
 import static com.kegare.frozenland.core.Frozenland.*;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.BiomeManager;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.Level;
@@ -23,13 +22,11 @@ import com.kegare.frozenland.entity.EntityIceball;
 import com.kegare.frozenland.handler.FrozenEventHooks;
 import com.kegare.frozenland.handler.FrozenlandAPIHandler;
 import com.kegare.frozenland.item.FrozenItems;
-import com.kegare.frozenland.network.DimSyncMessage;
 import com.kegare.frozenland.plugin.sextiarysector.SextiarySectorPlugin;
 import com.kegare.frozenland.plugin.thaumcraft.ThaumcraftPlugin;
 import com.kegare.frozenland.util.FrozenLog;
 import com.kegare.frozenland.util.Version;
 import com.kegare.frozenland.world.BiomeGenFrozenland;
-import com.kegare.frozenland.world.WorldProviderFrozenland;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -81,8 +78,7 @@ public class Frozenland
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		int id = 0;
-
-		network.registerMessage(DimSyncMessage.class, DimSyncMessage.class, id++, Side.CLIENT);
+		network.registerMessage(Config.class, Config.class, id++, Side.CLIENT);
 
 		Config.syncConfig();
 
@@ -97,14 +93,9 @@ public class Frozenland
 	public void init(FMLInitializationEvent event)
 	{
 		int id = 0;
-
-		EntityRegistry.registerModEntity(EntityIceball.class, "Iceball", id++, this, 128, 1, true);
+		EntityRegistry.registerModEntity(EntityIceball.class, "Iceball", id++, this, 128, 5, true);
 
 		proxy.registerRenderers();
-
-		id = Config.dimensionFrozenland;
-		DimensionManager.registerProviderType(id, WorldProviderFrozenland.class, true);
-		DimensionManager.registerDimension(id, id);
 
 		FMLCommonHandler.instance().bus().register(FrozenEventHooks.instance);
 

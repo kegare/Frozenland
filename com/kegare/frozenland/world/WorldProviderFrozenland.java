@@ -16,7 +16,6 @@ import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.biome.WorldChunkManagerHell;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraft.world.storage.DerivedWorldInfo;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.IRenderHandler;
 
@@ -27,7 +26,6 @@ import com.kegare.frozenland.util.FrozenUtils;
 import com.kegare.frozenland.world.gen.StructureVillagePieces;
 import com.kegare.frozenland.world.gen.StructureVillageStart;
 
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -154,8 +152,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	public Vec3 drawClouds(float ticks)
 	{
 		long cloudColour = 7829367L;
-		float angle = worldObj.getCelestialAngle(ticks);
-		float var1 = MathHelper.clamp_float(MathHelper.cos(angle * (float)Math.PI * 2.0F) * 2.0F + 0.5F, 0.05F, 1.0F);
+		float var1 = MathHelper.clamp_float(MathHelper.cos(worldObj.getCelestialAngle(ticks) * (float)Math.PI * 2.0F) * 2.0F + 0.5F, 0.05F, 1.0F);
 		float vecX = (cloudColour >> 16 & 255L) / 255.0F;
 		float vecY = (cloudColour >> 8 & 255L) / 255.0F;
 		float vecZ = (cloudColour & 255L) / 255.0F;
@@ -192,21 +189,21 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 	@Override
 	public float getSunBrightnessFactor(float ticks)
 	{
-		return super.getSunBrightnessFactor(ticks) / 1.75F;
+		return super.getSunBrightnessFactor(ticks) * 0.565F;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public float getSunBrightness(float ticks)
 	{
-		return super.getSunBrightness(ticks) / 2.25F;
+		return super.getSunBrightness(ticks) * 0.475F;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public float getStarBrightness(float ticks)
 	{
-		return super.getStarBrightness(ticks) * 1.65F;
+		return super.getStarBrightness(ticks) * 1.5F;
 	}
 
 	@Override
@@ -222,7 +219,7 @@ public class WorldProviderFrozenland extends WorldProviderSurface
 
 		if (worldObj.getGameRules().getGameRuleBooleanValue("doDaylightCycle"))
 		{
-			WorldInfo worldInfo = ObfuscationReflectionHelper.getPrivateValue(DerivedWorldInfo.class, (DerivedWorldInfo)worldObj.getWorldInfo(), "theWorldInfo", "field_76115_a");
+			WorldInfo worldInfo = FrozenUtils.getWorldInfo(worldObj);
 			long i = worldInfo.getWorldTime() + 24000L;
 
 			worldInfo.setWorldTime(i - i % 24000L);

@@ -35,7 +35,7 @@ public class RenderIceball extends Render
 			GL11.glScalef(0.5F, 0.5F, 0.5F);
 			bindEntityTexture(entity);
 			Tessellator tessellator = Tessellator.instance;
-			int i = 0xD3EDFB;
+			int i = 0x95CBE7;
 			float r = (i >> 16 & 255) / 255.0F;
 			float g = (i >> 8 & 255) / 255.0F;
 			float b = (i & 255) / 255.0F;
