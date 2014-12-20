@@ -58,7 +58,7 @@ import com.kegare.frozenland.util.Version;
 import com.kegare.frozenland.util.Version.Status;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.event.ConfigChangedEvent;
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -78,7 +78,7 @@ public class FrozenEventHooks
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onConfigChanged(ConfigChangedEvent event)
+	public void onConfigChanged(OnConfigChangedEvent event)
 	{
 		if (event.modID.equals(Frozenland.MODID))
 		{

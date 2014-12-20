@@ -1,12 +1,3 @@
-/*
- * Frozenland
- *
- * Copyright (c) 2014 kegare
- * https://github.com/kegare
- *
- * This mod is distributed under the terms of the Minecraft Mod Public License Japanese Translation, or MMPL_J.
- */
-
 package com.kegare.frozenland.item;
 
 import java.util.List;
@@ -14,18 +5,23 @@ import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 
 import com.kegare.frozenland.api.IItemIceTool;
 import com.kegare.frozenland.core.Frozenland;
@@ -34,15 +30,15 @@ import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemIceSword extends ItemSword implements IItemIceTool
+public class ItemIceBow extends ItemBow implements IItemIceTool
 {
 	private final Random random = new Random();
 
-	public ItemIceSword(String name)
+	public ItemIceBow(String name)
 	{
-		super(FrozenItems.ICE);
+		super();
 		this.setUnlocalizedName(name);
-		this.setTextureName("frozenland:ice_sword");
+		this.setTextureName("frozenland:ice_bow");
 		this.setCreativeTab(Frozenland.tabFrozenland);
 	}
 
@@ -88,30 +84,87 @@ public class ItemIceSword extends ItemSword implements IItemIceTool
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack itemstack, String toolClass)
+	public void onPlayerStoppedUsing(ItemStack itemstack, World world, EntityPlayer player, int useRemaining)
 	{
-		int level = super.getHarvestLevel(itemstack, toolClass);
-		int grade = getGrade(itemstack);
+		int charge = this.getMaxItemUseDuration(itemstack) - useRemaining;
 
-		if (grade >= 100)
+		ArrowLooseEvent event = new ArrowLooseEvent(player, itemstack, charge);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		if (event.isCanceled())
 		{
-			++level;
+			return;
 		}
 
-		return level;
+		charge = event.charge;
+
+		boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, itemstack) > 0;
+
+		if (flag || player.inventory.hasItem(Items.arrow))
+		{
+			float power = charge / 20.0F;
+			power = (power * power + power * 2.0F) / 3.0F;
+
+			if (power < 0.1D)
+			{
+				return;
+			}
+
+			if (power > 1.0F)
+			{
+				power = 1.0F;
+			}
+
+			EntityArrow arrow = new EntityArrow(world, player, power * (1.25F + random.nextFloat() * 0.5F));
+
+			int i = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, itemstack);
+
+			if (i > 0)
+			{
+				arrow.setDamage(arrow.getDamage() + i * 0.5D + 0.5D);
+			}
+
+			i = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, itemstack);
+
+			if (i > 0)
+			{
+				arrow.setKnockbackStrength(i);
+			}
+
+			if (EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, itemstack) > 0)
+			{
+				arrow.setFire(20);
+			}
+
+			itemstack.damageItem(1, player);
+			world.playSoundAtEntity(player, "random.bow", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + power * 0.5F);
+
+			if (flag)
+			{
+				arrow.canBePickedUp = 2;
+			}
+			else
+			{
+				player.inventory.consumeInventoryItem(Items.arrow);
+			}
+
+			if (!world.isRemote)
+			{
+				world.spawnEntityInWorld(arrow);
+			}
+		}
 	}
 
 	@Override
-	public boolean hitEntity(ItemStack itemstack, EntityLivingBase target, EntityLivingBase entity)
+	public int getMaxItemUseDuration(ItemStack itemstack)
 	{
-		BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posZ));
+		return super.getMaxItemUseDuration(itemstack) / 2;
+	}
 
-		if (BiomeDictionary.isBiomeOfType(biome, Type.COLD) && random.nextInt(2) == 0)
-		{
-			target.attackEntityFrom(DamageSource.causeMobDamage(entity), 0.5F);
-		}
-
-		return super.hitEntity(itemstack, target, entity);
+	@Override
+	public int getItemEnchantability()
+	{
+		return 0;
 	}
 
 	@Override
@@ -159,5 +212,32 @@ public class ItemIceSword extends ItemSword implements IItemIceTool
 				list.add(I18n.format("item.toolIce.upgraded") + ": " + grade);
 			}
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(ItemStack itemstack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
+	{
+		if (usingItem != null && usingItem.getItem() == this)
+		{
+			int i = usingItem.getMaxItemUseDuration() - useRemaining;
+
+			if (i >= 10)
+			{
+				return getItemIconForUseDuration(2);
+			}
+
+			if (i >= 5)
+			{
+				return getItemIconForUseDuration(1);
+			}
+
+			if (i > 0)
+			{
+				return getItemIconForUseDuration(0);
+			}
+		}
+
+		return super.getIcon(itemstack, renderPass, player, usingItem, useRemaining);
 	}
 }

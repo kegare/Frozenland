@@ -28,7 +28,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class FrozenItems
 {
-	public static final ToolMaterial ICE = EnumHelper.addToolMaterial("ice", 1, 120, 5.0F, 1.0F, 10);
+	public static final ToolMaterial ICE = EnumHelper.addToolMaterial("ice", 1, 120, 5.0F, 1.0F, 0);
 
 	public static final ItemDimensionalBook frozenland_dimensional_book = new ItemDimensionalBook("frozenlandDimensionalBook", "frozenland_dimensional_book", FrozenlandAPI.getDimension());
 	public static final ItemIceStick ice_stick = new ItemIceStick("stickIce");
@@ -37,6 +37,7 @@ public class FrozenItems
 	public static final ItemIceAxe ice_axe = new ItemIceAxe("axeIce");
 	public static final ItemIceSpade ice_shovel = new ItemIceSpade("shovelIce");
 	public static final ItemIceHoe ice_hoe = new ItemIceHoe("hoeIce");
+	public static final ItemIceBow ice_bow = new ItemIceBow("bowIce");
 	public static final ItemIceball iceball = new ItemIceball("iceball");
 
 	public static void registerItems()
@@ -165,6 +166,25 @@ public class FrozenItems
 
 			OreDictionary.registerOre("hoeIce", ice_hoe);
 			OreDictionary.registerOre("iceHoe", ice_hoe);
+		}
+
+		if (Config.bowIce)
+		{
+			GameRegistry.registerItem(ice_bow, "ice_bow");
+
+			GameRegistry.addRecipe(new ShapedOreRecipe(ice_bow,
+				"SI ", "S I", "SI ",
+				'I', "stickIce",
+				'S', Items.string
+			));
+			GameRegistry.addRecipe(new ShapedOreRecipe(ice_bow,
+				"SI ", "S I", "SI ",
+				'I', "iceStick",
+				'S', Items.string
+			));
+
+			OreDictionary.registerOre("bowIce", ice_bow);
+			OreDictionary.registerOre("iceBow", ice_bow);
 		}
 
 		if (Config.iceball)

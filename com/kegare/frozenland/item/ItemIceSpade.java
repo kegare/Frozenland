@@ -82,7 +82,7 @@ public class ItemIceSpade extends ItemSpade implements IItemIceTool
 	{
 		int max = super.getMaxDamage(itemstack);
 
-		return max + max / 2 * getGrade(itemstack);
+		return max + max / 4 * getGrade(itemstack);
 	}
 
 	@Override
@@ -91,12 +91,7 @@ public class ItemIceSpade extends ItemSpade implements IItemIceTool
 		int level = super.getHarvestLevel(itemstack, toolClass);
 		int grade = getGrade(itemstack);
 
-		if (grade >= 30)
-		{
-			++level;
-		}
-
-		if (grade >= 300)
+		if (grade >= 100)
 		{
 			++level;
 		}

@@ -50,6 +50,7 @@ public class Config implements IMessage, IMessageHandler<Config, IMessage>
 	public static boolean axeIce;
 	public static boolean shovelIce;
 	public static boolean hoeIce;
+	public static boolean bowIce;
 	public static boolean iceball;
 
 	public static boolean packedIceCraftRecipe;
@@ -208,6 +209,12 @@ public class Config implements IMessage, IMessageHandler<Config, IMessage>
 		prop.comment += " [default: " + prop.getDefault() + "]";
 		propOrder.add(prop.getName());
 		hoeIce = prop.getBoolean(hoeIce);
+		prop = config.get(category, "bowIce", true);
+		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
+		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");
+		prop.comment += " [default: " + prop.getDefault() + "]";
+		propOrder.add(prop.getName());
+		bowIce = prop.getBoolean(bowIce);
 		prop = config.get(category, "iceball", true);
 		prop.setRequiresMcRestart(true).setLanguageKey(Frozenland.CONFIG_LANG + category + "." + prop.getName());
 		prop.comment = StatCollector.translateToLocal(prop.getLanguageKey() + ".tooltip");

@@ -29,6 +29,8 @@ frozenland.config.items.shovelIce=Ice Shovel
 frozenland.config.items.shovelIce.tooltip=Whether or not to add the Ice Shovel.
 frozenland.config.items.hoeIce=Ice Hoe
 frozenland.config.items.hoeIce.tooltip=Whether or not to add the Ice Hoe.
+frozenland.config.items.bowIce=Ice Bow
+frozenland.config.items.bowIce.tooltip=Whether or not to add the Ice Bow.
 frozenland.config.items.iceball=Iceball
 frozenland.config.items.iceball.tooltip=Whether or not to add the Iceball.
 frozenland.config.recipes.packedIceCraftRecipe=Packed Ice Crafting Recipe
@@ -63,6 +65,7 @@ item.pickaxeIce.name=Ice Pickaxe
 item.axeIce.name=Ice Axe
 item.shovelIce.name=Ice Shovel
 item.hoeIce.name=Ice Hoe
+item.bowIce.name=Ice Bow
 item.iceball.name=Iceball
 
 entity.Iceball.name=Iceball
